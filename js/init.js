@@ -1,5 +1,4 @@
 import {Graph} from "./graph.js"
-
 import {Viewer} from "./viewer.js"
 
 window.addEventListener('load', init);

@@ -19,8 +19,6 @@ export class Viewer {
         this.controls.screenSpacePanning = true;
         this.controls.enableRotate = false;
 
-        // this.renderer.domElement,addEventListener("mouseup", this.test ,false)
-
         this.grid = new THREE.GridHelper(1000,10);
         this.grid.rotation.x = Math.PI/2;
         this.scene.add(this.grid);

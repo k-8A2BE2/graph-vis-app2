@@ -118,31 +118,11 @@ export class Graph {
 
     const current_viewport = this.viewer.getCurrentViewport();
 
-    // N.checkInOut(current_viewport);
-
-    // E_in = new Edges();
-    // E_inout = new Edges();
-    // E_out = new Edges();
-    // E_error = new Edges();
-
-    // for (var i = 0; i < E.length; i++) {
-    //   if ( E[i][0].isIn && E[i][E[i].length-1].isIn) {
-    //     E_in.push(E[i]);
-    //   }else if ( !E[i][0].isIn && !E[i][E[i].length-1].isIn ) {
-    //     E_out.push(E[i]);
-    //   } else {
-    //     const flag = E[i].computeBoundaryPoint(current_viewport);
-    //     if ( flag ) {
-    //       E_inout.push(E[i]);
-    //     } else {
-    //       E_error.push(E[i]);
-    //     }
-    //   }
-    // }
-
     for (const edge of this.E_inout) {
       edge.computeBoundaryPoint(current_viewport);
     }
+
+
 
     const ALL_SUBDIVISION_NUM = 100 * 64;
     const alpha = this.E_inout.length;
@@ -164,15 +144,14 @@ export class Graph {
     const E_inout_splited = new Edges();
     for (var i = 0; i < this.E_inout.length; i++) {
       this.E_inout[i].switchSourceTarget(current_viewport);
-      E_inout_splited.push(new SegmenEdge(this.E_inout[i], final_inout_subdivision_num));
+      E_inout_splited.push(new SegmentEdge(this.E_inout[i], final_inout_subdivision_num));
     }
 
     const E_in_splited = new Edges();
     for (let i = 0; i < this.E_in.length; i++) {
-      E_in_splited.push(new SegmenEdge(this.E_in[i], final_in_subdivision_num));
+      E_in_splited.push(new SegmentEdge(this.E_in[i], final_in_subdivision_num));
     }
 
-    // const B = new boundaryFDEB(N, E_inout, current_viewport);
     const B = new BFDEBMC(this.N, this.E_inout, current_viewport, this.viewer.initialViewport);
     B.compatibility_threshold = 0.8;
     B.P_rate = P_rate_inout;
@@ -403,7 +382,7 @@ export class Edge extends Array {
 
 }
 
-export class SegmenEdge extends Edge {
+export class SegmentEdge extends Edge {
   constructor(edge, segment) {
     let coordinate_list = [];
     coordinate_list.push(edge[0]);
