@@ -9,6 +9,10 @@ app = Flask(__name__, static_folder='.', static_url_path='')
 def index():
     return app.send_static_file('index.html')
 
+@app.route('/experiment')
+def experiment():
+    return app.send_static_file('./html/experiment.html')
+
 @app.route('/xml', methods=["POST"])
 def send_data():
     return app.send_static_file('airlines.xml')

@@ -1,4 +1,4 @@
-import {Viewport} from "./graph.js"
+import {Viewport} from "../graph_elements/viewport.js"
 
 export class Viewer {
     constructor(width=960, height=540) {
@@ -33,7 +33,7 @@ export class Viewer {
     }
 
     addMouseUpEvent(func) {
-        this.renderer.domElement,addEventListener("mouseup", func, false)
+        this.renderer.domElement.addEventListener("mouseup", func, false)
     }
 
     getCurrentViewport() {

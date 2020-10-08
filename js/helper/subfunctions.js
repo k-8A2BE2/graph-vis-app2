@@ -1,4 +1,4 @@
-import { Coordinate } from "./graph.js";
+import { Coordinate } from "../graph_elements/coordinate.js";
 
 export function judge_intersection(x1, y1, x2, y2, x3, y3, x4, y4) {
     const a = (x3 - x4) * (y1 - y3) + (y3 - y4) * (x3 - x1);
@@ -24,7 +24,6 @@ export function euclidean_distance(p, q) {
 export function similarity_length(l, a, b, c) {
     return l * (c - a) / (b - a);
 }
-
 
 export function project_point_on_line(p, Q_src, Q_tar) {
     const L = Math.sqrt((Q_tar.x - Q_src.x) * (Q_tar.x - Q_src.x) + (Q_tar.y - Q_src.y) * (Q_tar.y - Q_src.y));

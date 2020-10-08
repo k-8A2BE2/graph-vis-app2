@@ -1,5 +1,6 @@
-import {Coordinate, Node, Nodes, Edge, Edges} from "./graph.js"
-import {judge_intersection, intersection, euclidean_distance, similarity_length} from "./subfunctions.js"
+import {Edge, Edges} from "../graph_elements/edge.js"
+import { Coordinate } from "../graph_elements/coordinate.js"
+import { euclidean_distance } from "../helper/subfunctions.js"
 
 export class boundaryFDEB {
     

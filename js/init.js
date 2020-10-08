@@ -1,5 +1,5 @@
-import {Graph} from "./graph.js"
-import {Viewer} from "./viewer.js"
+import {Graph} from "./graph_elements/graph.js"
+import {Viewer} from "./ui/viewer.js"
 
 window.addEventListener('load', init);
 

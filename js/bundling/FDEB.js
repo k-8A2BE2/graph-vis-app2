@@ -1,5 +1,6 @@
-import {Coordinate, Node, Nodes, Edge, Edges} from "./graph.js"
-import {euclidean_distance, project_point_on_line} from "./subfunctions.js"
+import { Edge, Edges } from "../graph_elements/edge.js"
+import { Coordinate } from "../graph_elements/coordinate.js"
+import { euclidean_distance, project_point_on_line } from "../helper/subfunctions.js"
 
 export class FDEB {
     
