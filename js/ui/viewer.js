@@ -1,13 +1,14 @@
 import {Viewport} from "../graph_elements/viewport.js"
+import { Palette } from "./palette.js"
 
 export class Viewer {
-    constructor(width=960, height=540) {
+    constructor(width=960, height=540, palette=new Palette()) {
         this.renderer = new THREE.WebGLRenderer({
             canvas: document.querySelector('#myCanvas'),
             alpha: true,
             antialias: true,
         });
-        this.renderer.setClearColor(0x2e2e2e, 1)
+        this.renderer.setClearColor(palette.c1, 1)
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(width, height);
 

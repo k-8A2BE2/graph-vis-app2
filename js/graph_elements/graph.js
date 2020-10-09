@@ -7,11 +7,14 @@ import { Coordinate } from "./coordinate.js"
 import { Node, Nodes } from "./node.js"
 import { Edge, SegmentEdge, Edges, AnimationEdges} from "./edge.js"
 import { Viewport } from "./viewport.js"
+import { Palette } from "../ui/palette.js"
 
 export class Graph {
-  constructor(viewer) {
+  constructor(viewer,palette= new Palette()) {
     this.viewer = viewer
     this.scene = viewer.scene;
+
+    this.palette = palette;
 
     this.N = new Nodes();
     this.E = new Edges(this.scene);
@@ -104,11 +107,8 @@ export class Graph {
 
   update(viewer) {
     if ( viewer.isCameraMove() ) {
-      // this.AQ.push( [this.E_in.hiding] );
       this.N.checkInOut(viewer.getCurrentViewport());
       this.classifyingEdges();
-      // AQ.push( [this.E_in.showing] );
-      // viewer.addObject(this.E_in.getEdgeObjects());
       this.unbundle();
     }
     this.AQ.animateQueue();
@@ -170,8 +170,8 @@ export class Graph {
     this.AE_inout = new AnimationEdges(this.viewer.scene, E_inout_splited, E_curves, 12);
     this.AE_in = new AnimationEdges(this.viewer.scene, E_in_splited, E_in_curves, 12);
 
-    this.viewer.addObject(this.AE_inout.initializeFrameEdges());
-    this.viewer.addObject(this.AE_in.initializeFrameEdges(0xff3e40));
+    this.viewer.addObject(this.AE_inout.initializeFrameEdges(this.palette.c2));
+    this.viewer.addObject(this.AE_in.initializeFrameEdges(this.palette.c4));
 
     // this.AQ.push( [this.E.hiding] );
     this.AQ.push( [this.AE_in.bundling,this.AE_inout.bundling] );

@@ -14,8 +14,12 @@ def experiment():
     return app.send_static_file('./html/experiment.html')
 
 @app.route('/xml', methods=["POST"])
-def send_data():
+def send_xml():
     return app.send_static_file('airlines.xml')
+
+@app.route('/json', methods=["GET"])
+def send_json():
+    return app.send_static_file('./json/experimentalColor.json')
 
 
     
