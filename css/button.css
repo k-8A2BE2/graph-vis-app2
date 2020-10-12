@@ -1,0 +1,16 @@
+a.btn {
+	display: block;
+	width: 64px;
+	/* padding: 0.8em; */
+	text-align: center;
+	text-decoration: none;
+	color: #dfdfdf;
+	border: 2px solid #dfdfdf;
+	border-radius: 3px;
+	transition: .2s;
+}
+a.btn:hover {
+	background:#14c8bc;
+    color: #dfdfdf;
+    border: 2px solid #14c8bc;
+}

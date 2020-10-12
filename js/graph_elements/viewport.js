@@ -21,6 +21,7 @@ export class Viewport extends Array{
       this.upper_right = new Coordinate(this[2], this[3]);
       this.lower_right = new Coordinate(this[2], this[1]);
       this.center = new Coordinate((this[0]+this[2])/2.0, (this[1]+this[3])/2.0);
+      this.diagonal = euclidean_distance(this.lower_left, this.upper_right);
     }
   
     isIn(x, y) {

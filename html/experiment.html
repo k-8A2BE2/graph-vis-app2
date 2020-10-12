@@ -7,16 +7,110 @@
         <script type="text/javascript" src="../js/general/jquery-3.4.1.min.js" charset="utf-8"></script>
         <!-- <script src="my_FDEB.js" type="module" charset="utf-8"></script> -->
         <script src="../js/init_experimental.js" type="module"></script>
-        <link rel="stylesheet" href="./css/experiment.css">
+
+        <link rel="stylesheet" href="../css/experiment.css">
+        <link rel="stylesheet" href="../css/switch.css">
+        <link rel="stylesheet" href="../css/button.css">
+        <link rel="stylesheet" href="../css/pulldown.css">
       </head>
       
       <body>
-        <div>
-          Network Vizualization App Experimental Environment
+        <div class="container level1">
+
+          <div class="componentPanel">
+              <canvas id="myCanvas"></canvas>
+          </div>
+
         </div>
-        <hr>
-        <div>
-            <canvas id="myCanvas"></canvas>
+
+        <div class="container">
+
+          <div class="sideMenu cmponentPanel" id="AutoBundlePanel">
+            <div class="menuName">AutoBundle</div>
+            <div class="switchPanel">
+              <div class="switchArea level4">
+                <input type="checkbox" class=customSwitch id="switchAuto" checked="checked">
+                <label for="switchAuto"><span></span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="sideMenu cmponentPanel" id="ManualBundlePanel">
+            <div class="menuName">ManualBundle</div>
+            <div class="switchPanel">
+              <div class="switchArea level4">
+                <input type="checkbox" class=customSwitch id="switchManual">
+                <label for="switchManual"><span></span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="sideMenu componentPanel" id="subdivisionNumberPanel">
+            <div class="menuName">subdivision</div>
+            <div class="menuName">number</div>
+            <div class="pulldownPanel">
+              <select id="pulldownSubdivision">
+                <option value="fixed">fixed</option>
+                <option value="flexible">flexible</option>
+              </select>
+              </div>
+          </div>
+
+          <div class="sideMenu componentPanel" id="CompatibilityPanel">
+
+            <div class="menuName">Compatibility</div>
+
+            <div class="switchPanel">
+              <div class="MenuTag level4">Ca</div>
+              <div class="switchArea level4">
+                <input type="checkbox" class=customSwitch id="switchCa">
+                <label for="switchCa"><span></span></label>
+              </div>
+            </div>
+
+            <div class="switchPanel">
+              <div class="MenuTag level4">Cs</div> 
+              <div class="switchArea level4">
+                <input type="checkbox" class=customSwitch id="switchCs">
+                <label for="switchCs"><span></span></label>
+              </div>
+            </div>
+
+            <div class="switchPanel">
+              <div class="MenuTag level4">Cp</div> 
+              <div class="switchArea level4">
+                <input type="checkbox" class=customSwitch id="switchCp" checked="checked">
+                <label for="switchCp"><span></span></label>
+              </div>
+            </div>
+
+            <div class="switchPanel">
+              <div class="MenuTag level4">Cv</div> 
+              <div class="switchArea level4">
+                <input type="checkbox" class=customSwitch id="switchCv">
+                <label for="switchCv"><span></span></label>
+              </div>
+            </div>
+
+            <div class="switchPanel">
+              <div class="MenuTag level4">Cc</div> 
+              <div class="switchArea level4">
+                <input type="checkbox" class=customSwitch id="switchCc" checked="checked">
+                <label for="switchCc"><span></span></label>
+              </div>
+            </div>
+
+            <div class="switchPanel">
+              <div class="MenuTag level4">Cd</div> 
+              <div class="switchArea level4">
+                <input type="checkbox" class=customSwitch id="switchCd" checked="checked">
+                <label for="switchCd"><span></span></label>
+              </div>
+            </div>
+
+          </div>
+
         </div>
+
       </body>
 </html>

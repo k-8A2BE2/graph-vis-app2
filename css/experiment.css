@@ -1,8 +1,52 @@
-div {
+body {
+    background-color: #303030;
+    /* background-color: #ffffff; */
+}
+
+.container {
     display: flex;
     justify-content: center;
 }
 
-body {
-    background-color: #33333f;
+.container > * {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.sideMenu {
+    height: auto;
+    width: auto;
+    border: 2px solid;zx
+    border-radius: 3px;
+    border-color: #14c8bc;
+}
+
+.sideMenu > * {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.menuName {
+    text-align: center;
+    color: #dfdfdf;
+}
+
+.switchPanel {
+    display: flex;
+    justify-content: center;
+}
+
+.MenuTag {
+    color: #dfdfdf;
+}
+
+.level4 {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    margin-left: 3px;
+    margin-right: 3px;
 }

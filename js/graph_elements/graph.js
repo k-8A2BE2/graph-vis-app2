@@ -1,20 +1,19 @@
-import { Animation, AnimationQueue } from "./animation.js"
-import { euclidean_distance, intersection, judge_intersection } from "../helper/subfunctions.js"
+import { AnimationQueue } from "./animation.js"
 import {boundaryFDEBwithMoveableCenter as BFDEBMC } from "../bundling/boundaryFDEB.js"
 import {FDEB as normalFDEB} from "../bundling/FDEB.js"
 import { culculate_final_subdivision_num } from "../helper/subfunctions.js"
-import { Coordinate } from "./coordinate.js"
 import { Node, Nodes } from "./node.js"
 import { Edge, SegmentEdge, Edges, AnimationEdges} from "./edge.js"
-import { Viewport } from "./viewport.js"
 import { Palette } from "../ui/palette.js"
 
 export class Graph {
-  constructor(viewer,palette= new Palette()) {
+  constructor(viewer, palette= new Palette(), state) {
     this.viewer = viewer
     this.scene = viewer.scene;
 
     this.palette = palette;
+
+    this.state = state;
 
     this.N = new Nodes();
     this.E = new Edges(this.scene);
@@ -114,6 +113,24 @@ export class Graph {
     this.AQ.animateQueue();
   }
 
+  autoBundling() {
+    if (this.state.AutoBundle.checked) {
+      this.executeBundling();
+    }
+
+  }
+
+  executeBundling() {
+    if (this.state.subdivisionNumber.value === "fixed") {
+      this.bundle();
+    } else if (this.state.subdivisionNumber.value === "flexible") {
+      this.proportional_bundle();
+    } else {
+      console.log("else");
+      this.bundle();
+    }
+  }
+
   bundle() {
     if (this.bundleState) {
       console.error("Graph is already bundled.");
@@ -174,6 +191,65 @@ export class Graph {
     this.viewer.addObject(this.AE_in.initializeFrameEdges(this.palette.c4));
 
     // this.AQ.push( [this.E.hiding] );
+    this.AQ.push( [this.AE_in.bundling,this.AE_inout.bundling] );
+
+    this.bundleState = true;
+  }
+
+  proportional_bundle() {
+    if (this.bundleState) {
+      console.error("Graph is already bundled.");
+      return;
+    }
+
+    const current_viewport = this.viewer.getCurrentViewport();
+
+    for (const edge of this.E_inout) {
+      edge.computeBoundaryPoint(current_viewport);
+    }
+
+    this.AQ.push( [this.E.hiding] );
+
+    const C = 6;
+    const P_rate = 1.1;
+    const P_initial = 1;
+    const compatibility_threshold = 0.6;
+
+    const proportion = this.viewer.initialViewport.diagonal / current_viewport.diagonal;
+    const current_P_rate = Math.pow( (Math.pow(P_rate,C) * proportion), (1.0/C));
+
+    const final_subdivision_num = culculate_final_subdivision_num(P_initial, current_P_rate, C);
+
+    console.log("current_P_rate",current_P_rate);
+
+    const E_inout_splited = new Edges();
+    for (var i = 0; i < this.E_inout.length; i++) {
+      this.E_inout[i].switchSourceTarget(current_viewport);
+      E_inout_splited.push(new SegmentEdge(this.E_inout[i], final_subdivision_num));
+    }
+
+    const E_in_splited = new Edges();
+    for (let i = 0; i < this.E_in.length; i++) {
+      E_in_splited.push(new SegmentEdge(this.E_in[i], final_subdivision_num));
+    }
+
+    const B = new BFDEBMC(this.N, this.E_inout, current_viewport, this.viewer.initialViewport);
+    B.compatibility_threshold = 0.8;
+    B.P_rate = current_P_rate;
+    const E_curves = B.execute();
+
+    const B_in = new normalFDEB(this.N, this.E_in);
+    B_in.compatibility_threshold = compatibility_threshold;
+    B_in.P_rate = current_P_rate;
+    const E_in_curves = B_in.execute();
+
+
+    this.AE_inout = new AnimationEdges(this.viewer.scene, E_inout_splited, E_curves, 12);
+    this.AE_in = new AnimationEdges(this.viewer.scene, E_in_splited, E_in_curves, 12);
+
+    this.viewer.addObject(this.AE_inout.initializeFrameEdges(this.palette.c2));
+    this.viewer.addObject(this.AE_in.initializeFrameEdges(this.palette.c4));
+
     this.AQ.push( [this.AE_in.bundling,this.AE_inout.bundling] );
 
     this.bundleState = true;
