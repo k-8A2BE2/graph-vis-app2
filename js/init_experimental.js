@@ -12,7 +12,7 @@ async function init() {
     const palette = new Palette();
     const state = new State();
 
-    await Promise.all([palette.importJSON("/json"), state.initialize()])
+    await Promise.all([palette.experiment(), state.initialize()])
 
     const viewer = new Viewer(960, 540, palette);
 

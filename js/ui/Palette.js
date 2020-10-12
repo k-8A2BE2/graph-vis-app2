@@ -16,4 +16,12 @@ export class Palette {
             this.c5 = data.c5;
         });
     }
+
+    async experiment() {
+        this.c1 = "rgb(51,51,63)", 
+        this.c2 = "rgb(20,200,188)",
+        this.c3 = "rgb(97,20,199)",
+        this.c4 = "#EC407A", 
+        this.c5 = "#dfdfdf"
+    }
 }
