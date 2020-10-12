@@ -1,5 +1,5 @@
 import {Viewport} from "../graph_elements/viewport.js"
-import { Palette } from "./palette.js"
+import { Palette } from "../ui/palette.js"
 
 export class Viewer {
     constructor(width=960, height=540, palette=new Palette()) {
