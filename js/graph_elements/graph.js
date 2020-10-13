@@ -119,7 +119,7 @@ export class Graph {
     }
 
   }
-
+  
   executeBundling() {
     if (this.state.subdivisionNumber.value === "fixed") {
       this.bundle();

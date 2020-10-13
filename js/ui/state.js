@@ -2,7 +2,14 @@ import { Checkbox, Pulldown } from "./uiCompoents.js"
 
 export class State {
     constructor() {
-        
+        this.Ca = false;
+        this.Cs = false;
+        this.Cp = true;
+        this.Cv = false;
+        this.Cc = true;
+        this.Cd = true;
+        this.AutoBundle = true;
+        this.subdivisionNumber = "fixed";
     }
 
     async initialize() {
