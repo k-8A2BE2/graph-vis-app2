@@ -342,7 +342,7 @@ export class FDEB {
 
           //prepare for next cycle
           S = S / 2;
-          P = Math.ceil(P * this.P_rate);
+          P = (Math.ceil(P * this.P_rate) == P ? P + 1 : Math.ceil(P * this.P_rate));
           I = this.I_rate * I;
           console.log("S:",S," P:",P,"I:",I);
           this.update_edge_divisions(P);

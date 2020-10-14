@@ -1,73 +1,8 @@
-import {Edge, Edges} from "../graph_elements/edge.js"
 import { Coordinate } from "../graph_elements/coordinate.js"
 import { euclidean_distance } from "../helper/subfunctions.js"
+import { FDEB } from "./FDEB.js"
 
-export class boundaryFDEB {
-    
-    constructor({nodes, edges, viewport, K=0.1, S_initial=0.1, P_initial=1, P_rate=2, C=6,
-      I_initial=70, I_rate=0.6666667, compatibility_threshold=0.6, eps=1e-8}) {
-      this.data_nodes = nodes;
-      this.data_edges = this.filter_self_loops(edges);
-      this.viewport = viewport;
-
-      this.compatibility_list_for_edge = [];
-      this.subdivision_points_for_edge = [];
-      this.compatibility_score_list = [];
-
-      this.K = K; // global bundling constant controling edge stiffness
-      this.S_initial = S_initial; // init. distance to move points
-      this.P_initial = P_initial; // init. subdivision number
-      this.P_rate = P_rate; // subdivision rate increase
-      this.C = C; // number of cycles to perform
-      this.I_initial = I_initial; // init. number of iterations for cycle
-      this.I_rate = I_rate; // rate at which iteration number decreases i.e. 2/3
-      this.compatibility_threshold = compatibility_threshold;
-      this.eps = eps;
-    }
-
-    ////////////////////////
-    // INITIALIZE METHODS //
-    ////////////////////////
-
-    filter_self_loops(edgelist) {
-      let filtered_edge_list = [];
-      for (let e = 0; e < edgelist.length; e++) {
-        if (this.data_nodes[edgelist[e].source].x != this.data_nodes[edgelist[e].target].x &&
-          this.data_nodes[edgelist[e].source].y != this.data_nodes[edgelist[e].target].y) {
-          filtered_edge_list.push(edgelist[e]);
-        }
-      }
-      return filtered_edge_list;
-    }
-
-    initialize_edge_subdivisions() {
-      for (let i = 0; i < this.data_edges.length; i++)
-      if (this.P_initial == 1)
-        this.subdivision_points_for_edge[i] = []; //0 subdivisions
-      else {
-        this.subdivision_points_for_edge[i] = [];
-        this.subdivision_points_for_edge[i].push(this.data_nodes[this.data_edges[i].source]);
-        this.subdivision_points_for_edge[i].push(this.data_nodes[this.data_edges[i].target]);
-      }
-    }
-
-    initialize_compatibility_lists() {
-      for (var i = 0; i < this.data_edges.length; i++) {
-        this.compatibility_list_for_edge[i] = []; //0 compatible edges.
-        this.compatibility_score_list[i] = [];
-      }
-    }
-
-    initialize_viewport() {
-      if (this.viewport) {
-        this.lower_left = [this.viewport[0], this.viewport[1]];
-        this.upper_left = [this.viewport[0], this.viewport[3]];
-        this.upper_right = [this.viewport[2], this.viewport[3]];
-        this.lower_right = [this.viewport[2], this.viewport[1]];
-      }
-    }
-
-
+export class boundaryFDEB extends FDEB{
 
     //////////////////////////////////
     // CULCULATE SUBDIVISION METHOD //
@@ -180,31 +115,9 @@ export class boundaryFDEB {
       return new_subdivision_points;
     }
 
-
-
     ///////////////////////////
     // COMPATIBILITY METHODS //
     ///////////////////////////
-
-    compute_compatibility_lists() {
-      for (let p_idx = 0; p_idx < this.data_edges.length - 1; p_idx++) {
-        for (let q_idx = p_idx + 1; q_idx < this.data_edges.length; q_idx++) {
-          if (p_idx == q_idx) {
-            continue;
-          } else {
-            const P = this.data_edges[p_idx];
-            const Q = this.data_edges[q_idx];
-            const score = this.compatibility_score(P, Q);
-            if (score >= this.compatibility_threshold) {
-              this.compatibility_list_for_edge[p_idx].push(q_idx);
-              this.compatibility_list_for_edge[q_idx].push(p_idx);
-              this.compatibility_score_list[p_idx].push(score);
-              this.compatibility_score_list[q_idx].push(score);
-            }
-          } 
-        }
-      }
-    }
 
     compatibility_score(P, Q) {
       // console.log("afcc",this.angle_from_center_compatibility(P, Q),"cac",this.center_angle_compatibility(P, Q));
@@ -284,156 +197,6 @@ export class boundaryFDEB {
       return average_length / (average_length + euclidean_distance(P_middle, Q_middle));
     }
 
-
-
-
-    //////////////////////////////
-    // FORCE SIMURATION METHODS //
-    //////////////////////////////
-
-    apply_spring_force(e_idx, i, kP) {
-
-      const prev = this.subdivision_points_for_edge[e_idx][i - 1];
-      const crnt = this.subdivision_points_for_edge[e_idx][i];
-      const next = this.subdivision_points_for_edge[e_idx][i + 1];
-  
-      let x, y
-
-      try {
-        x = prev.x - crnt.x + next.x - crnt.x;
-        y = prev.y - crnt.y + next.y - crnt.y;  
-      } catch (error) {
-        console.error("e_idx",e_idx,"i",i,prev,crnt,next);
-        throw "Error"
-      }
-      
-  
-      x *= kP;
-      y *= kP;
-  
-      return {'x': x, 'y': y};
-    }
-
-    apply_electrostatic_force(e_idx, i) {
-      let sum_of_forces = {'x': 0, 'y': 0};
-      let compatible_edges_list = this.compatibility_list_for_edge[e_idx];
-      window.sbd = this.subdivision_points_for_edge;
-  
-      for (let oe = 0; oe < compatible_edges_list.length; oe++) {
-        const oe_idx = compatible_edges_list[oe];
-        const e_subdivision = this.subdivision_points_for_edge[e_idx][i];
-        const oe_subdivision = this.subdivision_points_for_edge[oe_idx][i];
-  
-        const vec = {
-          'x': oe_subdivision.x - e_subdivision.x,
-          'y': oe_subdivision.y - e_subdivision.y
-        };
-  
-        if ((Math.abs(vec.x) > this.eps) || (Math.abs(vec.y) > this.eps)) {
-          const diff = (1 / Math.pow(euclidean_distance(oe_subdivision, e_subdivision), 1));
-          sum_of_forces.x += vec.x * diff * this.compatibility_score_list[e_idx][oe];
-          sum_of_forces.y += vec.y * diff * this.compatibility_score_list[e_idx][oe];
-        }
-      }
-  
-      return sum_of_forces;
-    }
-  
-    apply_resulting_forces_on_subdivision_points(e_idx, P, S) {
-      let kP = this.K / (this.data_edges[e_idx].len * (P + 1));
-  
-      let resulting_forces_for_subdivision_points = [{
-        'x': 0,
-        'y': 0
-      }];
-  
-      for (var i = 1; i < P + 1; i++) {
-        var resulting_force = {
-          'x': 0,
-          'y': 0
-        };
-  
-        let spring_force = this.apply_spring_force(e_idx, i, kP);
-        let electrostatic_force = this.apply_electrostatic_force(e_idx, i);
-  
-        resulting_force.x = S * (spring_force.x + electrostatic_force.x);
-        resulting_force.y = S * (spring_force.y + electrostatic_force.y);
-  
-        resulting_forces_for_subdivision_points.push(resulting_force);
-      }
-  
-      resulting_forces_for_subdivision_points.push({
-        'x': 0,
-        'y': 0
-      });
-  
-      return resulting_forces_for_subdivision_points;
-    }
-
-
-
-    ////////////////////
-    // HELPER METHODS //
-    ////////////////////
-
-    translaterForThree(spfe) {
-
-      const E = new Edges();
-      for (var i = 0; i < spfe.length; i++) {
-        let node_list = [];
-        node_list.push(spfe[i][0]);
-        for (var j = 1; j < spfe[i].length-1; j++) {
-          let n = new Coordinate(spfe[i][j].x, spfe[i][j].y, 0);
-          node_list.push(n);
-        }
-        node_list.push(spfe[i][spfe[i].length-1]);
-        E.push(new Edge(node_list));
-      }
-      return E;
-    }
-
-    execute() {
-        let S = this.S_initial; //
-        let I = this.I_initial; //
-        let P = this.P_initial; // Pはエッジの内点の数。見掛け上は両端の点で＋2されている。
-    
-        this.initialize_edge_subdivisions();
-        this.initialize_compatibility_lists();
-    
-        this.update_edge_divisions(P);
-
-        this.compute_compatibility_lists();
-    
-        for (var cycle = 0; cycle < this.C; cycle++) {
-
-          for (var iteration = 0; iteration < I; iteration++) {
-            var forces = [];
-
-            for (var edge = 0; edge < this.data_edges.length; edge++) {
-              forces[edge] = this.apply_resulting_forces_on_subdivision_points(edge, P, S);
-            }
-
- 
-            for (var e = 0; e < this.data_edges.length; e++) {
-              for (var i = 0; i < P + 1; i++) {
-                this.subdivision_points_for_edge[e][i].x += forces[e][i].x;
-                this.subdivision_points_for_edge[e][i].y += forces[e][i].y;
-              }
-            }
-          }
-
-          //prepare for next cycle
-          S = S / 2;
-          P = (Math.ceil(P * this.P_rate) == P ? P + 1 : Math.ceil(P * this.P_rate));
-          I = this.I_rate * I;
-    
-          console.log("S:",S," P:",P,"I:",I);
-
-          this.update_edge_divisions(P);
-        }
-
-        return this.translaterForThree(this.subdivision_points_for_edge);
-      }
 }
 
 
@@ -484,8 +247,6 @@ export class boundaryFDEBwithMoveableCenter extends boundaryFDEB {
   }
 
   compatibility_score(P, Q) {
-    // console.log("afcc",this.angle_from_center_compatibility(P, Q),"cac",this.center_angle_compatibility(P, Q), "cdc", this.distance_from_center_compatibility(P, Q));
-    // return this.center_angle_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); // legacy
     return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
   }
 
