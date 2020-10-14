@@ -2,6 +2,7 @@ import { Checkbox, Pulldown } from "./uiCompoents.js"
 
 export class State {
     constructor() {
+        // parameter from user interface
         this.Ca = false;
         this.Cs = false;
         this.Cp = true;
@@ -10,7 +11,6 @@ export class State {
         this.Cd = true;
         this.AutoBundle = true;
         this.subdivisionNumber = "fixed";
-        console.log("branch move!");
     }
 
     async initialize() {

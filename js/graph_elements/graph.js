@@ -117,7 +117,6 @@ export class Graph {
     if (this.state.AutoBundle.checked) {
       this.executeBundling();
     }
-
   }
   
   executeBundling() {
@@ -162,16 +161,9 @@ export class Graph {
 
     console.log("P_rate_inout",P_rate_inout,"P_rate_in",P_rate_in);
 
-    const E_inout_splited = new Edges();
-    for (var i = 0; i < this.E_inout.length; i++) {
-      this.E_inout[i].switchSourceTarget(current_viewport);
-      E_inout_splited.push(new SegmentEdge(this.E_inout[i], final_inout_subdivision_num));
-    }
+    const E_inout_splited = this.E_inout.createSegmentedEdges(final_inout_subdivision_num);
+    const E_in_splited = this.E_in_splited = this.E_in.createSegmentedEdges(final_in_subdivision_num);
 
-    const E_in_splited = new Edges();
-    for (let i = 0; i < this.E_in.length; i++) {
-      E_in_splited.push(new SegmentEdge(this.E_in[i], final_in_subdivision_num));
-    }
 
 
     const B = new BFDEBMC(this.N, this.E_inout, current_viewport, this.viewer.initialViewport);
@@ -222,16 +214,8 @@ export class Graph {
 
     console.log("current_P_rate",current_P_rate);
 
-    const E_inout_splited = new Edges();
-    for (var i = 0; i < this.E_inout.length; i++) {
-      this.E_inout[i].switchSourceTarget(current_viewport);
-      E_inout_splited.push(new SegmentEdge(this.E_inout[i], final_subdivision_num));
-    }
-
-    const E_in_splited = new Edges();
-    for (let i = 0; i < this.E_in.length; i++) {
-      E_in_splited.push(new SegmentEdge(this.E_in[i], final_subdivision_num));
-    }
+    const E_inout_splited = this.E_inout.createSegmentedEdges(final_subdivision_num);
+    const E_in_splited = this.E_in_splited = this.E_in.createSegmentedEdges(final_subdivision_num);
 
     const B = new BFDEBMC(this.N, this.E_inout, current_viewport, this.viewer.initialViewport);
     B.compatibility_threshold = 0.8;

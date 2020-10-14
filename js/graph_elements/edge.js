@@ -136,7 +136,6 @@ export class Edges extends Array{
     this.segments += e.segments;
   }
 
-
   getEdgeObjects(color=0xf5ec9f) {
     this.geometry = new THREE.BufferGeometry();
     this.geometry.setAttribute("position", new THREE.Float32BufferAttribute(this.flat(2), 3));
@@ -196,6 +195,14 @@ export class Edges extends Array{
       tuplelist.push([this[i].source, this[i].target]);
     }
     return tuplelist;
+  }
+
+  createSegmentedEdges(segmentNum) {
+    const segmentedEdges = new Edges();
+    for (const edge of this) {
+      segmentedEdges.push(new SegmentEdge(edge, segmentNum));
+    }
+    return segmentedEdges;
   }
 
 }
