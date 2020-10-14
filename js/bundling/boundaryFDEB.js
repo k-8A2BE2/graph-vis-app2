@@ -206,10 +206,6 @@ export class boundaryFDEB {
       }
     }
 
-    are_compatible(P, Q) {
-      return (this.compatibility_score(P, Q) >= this.compatibility_threshold);
-    }
-
     compatibility_score(P, Q) {
       // console.log("afcc",this.angle_from_center_compatibility(P, Q),"cac",this.center_angle_compatibility(P, Q));
       return this.center_angle_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); // legacy
