@@ -4,8 +4,8 @@ import { euclidean_distance, project_point_on_line } from "../helper/subfunction
 
 export class FDEB {
     
-    constructor(nodes, edges, viewport, K=0.1, S_initial=0.1, P_initial=1, P_rate=2, C=6,
-      I_initial=70, I_rate=0.6666667, compatibility_threshold=0.6, eps=1e-8) {
+    constructor({nodes, edges, viewport, K=0.1, S_initial=0.1, P_initial=1, P_rate=2, C=6,
+      I_initial=70, I_rate=0.6666667, compatibility_threshold=0.6, eps=1e-8}) {
       this.data_nodes = nodes;
       this.data_edges = this.filter_self_loops(edges);
       this.viewport = viewport;

@@ -159,22 +159,11 @@ export class Graph {
     const final_inout_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
     const final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_in, C);
 
-    console.log("P_rate_inout",P_rate_inout,"P_rate_in",P_rate_in);
-
     const E_inout_splited = this.E_inout.createSegmentedEdges(final_inout_subdivision_num);
     const E_in_splited = this.E_in_splited = this.E_in.createSegmentedEdges(final_in_subdivision_num);
 
-
-
-    const B = new BFDEBMC(this.N, this.E_inout, current_viewport, this.viewer.initialViewport);
-    B.compatibility_threshold = 0.8;
-    B.P_rate = P_rate_inout;
-    const E_curves = B.execute();
-
-    const B_in = new normalFDEB(this.N, this.E_in);
-    B_in.compatibility_threshold = compatibility_threshold;
-    B_in.P_rate = P_rate_in;
-    const E_in_curves = B_in.execute();
+    const E_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.8, P_rate: P_rate_inout}).execute();
+    const E_in_curves = new normalFDEB({nodes: this.N, edges: this.E_in, compatibility_threshold: 0.6, P_rate: P_rate_in}).execute();
 
     this.AE_inout = new AnimationEdges(this.viewer.scene, E_inout_splited, E_curves, 12);
     this.AE_in = new AnimationEdges(this.viewer.scene, E_in_splited, E_in_curves, 12);
@@ -212,21 +201,11 @@ export class Graph {
 
     const final_subdivision_num = culculate_final_subdivision_num(P_initial, current_P_rate, C);
 
-    console.log("current_P_rate",current_P_rate);
-
     const E_inout_splited = this.E_inout.createSegmentedEdges(final_subdivision_num);
     const E_in_splited = this.E_in_splited = this.E_in.createSegmentedEdges(final_subdivision_num);
 
-    const B = new BFDEBMC(this.N, this.E_inout, current_viewport, this.viewer.initialViewport);
-    B.compatibility_threshold = 0.8;
-    B.P_rate = current_P_rate;
-    const E_curves = B.execute();
-
-    const B_in = new normalFDEB(this.N, this.E_in);
-    B_in.compatibility_threshold = compatibility_threshold;
-    B_in.P_rate = current_P_rate;
-    const E_in_curves = B_in.execute();
-
+    const E_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.8, P_rate: current_P_rate}).execute();
+    const E_in_curves = new normalFDEB({nodes: this.N, edges: this.E_in, compatibility_threshold: 0.6, P_rate: current_P_rate}).execute();
 
     this.AE_inout = new AnimationEdges(this.viewer.scene, E_inout_splited, E_curves, 12);
     this.AE_in = new AnimationEdges(this.viewer.scene, E_in_splited, E_in_curves, 12);

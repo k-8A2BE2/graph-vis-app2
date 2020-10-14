@@ -4,8 +4,8 @@ import { euclidean_distance } from "../helper/subfunctions.js"
 
 export class boundaryFDEB {
     
-    constructor(nodes, edges, viewport, K=0.1, S_initial=0.1, P_initial=1, P_rate=2, C=6,
-      I_initial=70, I_rate=0.6666667, compatibility_threshold=0.6, eps=1e-8) {
+    constructor({nodes, edges, viewport, K=0.1, S_initial=0.1, P_initial=1, P_rate=2, C=6,
+      I_initial=70, I_rate=0.6666667, compatibility_threshold=0.6, eps=1e-8}) {
       this.data_nodes = nodes;
       this.data_edges = this.filter_self_loops(edges);
       this.viewport = viewport;
@@ -442,9 +442,9 @@ export class boundaryFDEB {
 
 
 export class boundaryFDEBwithMoveableCenter extends boundaryFDEB {
-  constructor(nodes, edges, viewport, initial_viewport, K=0.1, S_initial=0.1, P_initial=1, P_rate=2, C=6,
-    I_initial=70, I_rate=0.6666667, compatibility_threshold=0.6, eps=1e-8) {
-    super(nodes, edges, viewport, K, S_initial, P_initial, P_rate, C, I_initial, I_rate, compatibility_threshold, eps);
+  constructor({nodes, edges, viewport, initial_viewport, K=0.1, S_initial=0.1, P_initial=1, P_rate=2, C=6,
+    I_initial=70, I_rate=0.6666667, compatibility_threshold=0.6, eps=1e-8}) {
+    super({nodes:nodes, edges:edges, viewport:viewport, K:K, S_initial:S_initial, P_initial:P_initial, P_rate:P_rate, C:C, I_initial:I_initial, I_rate:I_rate, compatibility_threshold:compatibility_threshold, eps:eps});
     this.initial_viewport = initial_viewport;
     this.viewport_ratio = euclidean_distance(this.viewport.lower_left, this.viewport.upper_right) / euclidean_distance(this.initial_viewport.lower_left, this.initial_viewport.upper_right);
   }
