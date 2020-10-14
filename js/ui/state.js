@@ -10,6 +10,7 @@ export class State {
         this.Cd = true;
         this.AutoBundle = true;
         this.subdivisionNumber = "fixed";
+        console.log("branch move!");
     }
 
     async initialize() {
