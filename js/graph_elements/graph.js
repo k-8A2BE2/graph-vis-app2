@@ -138,11 +138,7 @@ export class Graph {
 
     const current_viewport = this.viewer.getCurrentViewport();
 
-    for (const edge of this.E_inout) {
-      edge.computeBoundaryPoint(current_viewport);
-    }
-
-    this.AQ.push( [this.E.hiding] );
+    this.E_inout.map(edge => {edge.computeBoundaryPoint(current_viewport); return edge});
 
     const ALL_SUBDIVISION_NUM = 100 * 64;
     const alpha = this.E_inout.length;
@@ -153,9 +149,9 @@ export class Graph {
 
     const C = 6;
     const P_initial = 1;
+    
     const P_rate_inout = Math.pow(inout_subdivision_num / ((alpha + beta) * P_initial), (1 / C));
     const P_rate_in = Math.pow(in_subdivision_num / ((alpha + beta) * P_initial), (1 / C));
-    const compatibility_threshold = 0.6;
     const final_inout_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
     const final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_in, C);
 
@@ -171,7 +167,7 @@ export class Graph {
     this.viewer.addObject(this.AE_inout.initializeFrameEdges(this.palette.c2));
     this.viewer.addObject(this.AE_in.initializeFrameEdges(this.palette.c4));
 
-    // this.AQ.push( [this.E.hiding] );
+    this.AQ.push( [this.E.hiding] );
     this.AQ.push( [this.AE_in.bundling,this.AE_inout.bundling] );
 
     this.bundleState = true;
@@ -185,16 +181,13 @@ export class Graph {
 
     const current_viewport = this.viewer.getCurrentViewport();
 
-    for (const edge of this.E_inout) {
-      edge.computeBoundaryPoint(current_viewport);
-    }
+    this.E_inout.map(edge => {edge.computeBoundaryPoint(current_viewport); return edge});
 
     this.AQ.push( [this.E.hiding] );
 
     const C = 6;
     const P_rate = 1.1;
     const P_initial = 1;
-    const compatibility_threshold = 0.6;
 
     const proportion = this.viewer.initialViewport.diagonal / current_viewport.diagonal;
     const current_P_rate = Math.pow( (Math.pow(P_rate,C) * proportion), (1.0/C));

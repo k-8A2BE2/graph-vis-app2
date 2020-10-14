@@ -205,6 +205,7 @@ export class Edges extends Array{
     return segmentedEdges;
   }
 
+
 }
 
 export class AnimationEdges {

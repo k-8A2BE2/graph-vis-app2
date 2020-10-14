@@ -157,7 +157,6 @@ export class boundaryFDEB extends FDEB{
       return Math.cos(r);
     }
 
-
     angle_from_center_compatibility(P, Q) {
       const P_target = this.data_nodes[P.target];
       const Q_target = this.data_nodes[Q.target];
