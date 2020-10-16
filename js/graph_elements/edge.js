@@ -105,6 +105,17 @@ export class SegmentEdge extends Edge {
   }
 }
 
+export class SegmentEdge2 extends Edge {
+  constructor(edge, segment) {
+    const coordinateList = [];
+    coordinateList.push(edge[0])
+    for (let i = 1; i < edge.length; i++) {
+      console.log("git test");
+      
+    }
+  }
+}
+
 export class Edges extends Array{
   constructor(scene) {
     super();
