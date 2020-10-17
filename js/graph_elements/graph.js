@@ -158,6 +158,8 @@ export class Graph {
     const E_inout_splited = this.E_inout.createSegmentedEdges(final_inout_subdivision_num);
     const E_in_splited = this.E_in_splited = this.E_in.createSegmentedEdges(final_in_subdivision_num);
 
+    // console.log(E_inout_splited);
+
     const E_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.8, P_rate: P_rate_inout}).execute();
     const E_in_curves = new normalFDEB({nodes: this.N, edges: this.E_in, compatibility_threshold: 0.6, P_rate: P_rate_in}).execute();
 

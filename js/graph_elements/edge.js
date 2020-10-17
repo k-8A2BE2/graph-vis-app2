@@ -93,28 +93,80 @@ export class Edge extends Array {
 export class SegmentEdge extends Edge {
   constructor(edge, segment) {
     let coordinate_list = [];
-    coordinate_list.push(edge[0]);
+    coordinate_list.push(edge[0].clone());
     for (let i = 1; i < segment+1; i++) {
       const x = edge[0].x + (edge[edge.length-1].x - edge[0].x) / (segment + 1) * i;
       const y = edge[0].y + (edge[edge.length-1].y - edge[0].y) / (segment + 1) * i;
       const z = edge[0].z + (edge[edge.length-1].z - edge[0].z) / (segment + 1) * i;
       coordinate_list.push(new Coordinate(x,y,z));
     }
-    coordinate_list.push(edge[edge.length-1]);
+    coordinate_list.push(edge[edge.length-1].clone());
     super(coordinate_list, edge.idx, edge.src, edge.tar);
   }
 }
 
 export class SegmentEdge2 extends Edge {
   constructor(edge, segment) {
-    const coordinateList = [];
-    coordinateList.push(edge[0])
+    console.log(segment);
+    const coordinateList = SegmentEdge2.culculate_edge_division(edge, segment);
+    super(coordinateList, edge.idx, edge.src, edge.tar);
+  }
+
+  static culculate_curve_length(edge) {
+    let whole_curve_length = 0.0;
     for (let i = 1; i < edge.length; i++) {
-      console.log("git test");
-      
+      const previous_subdivision = edge[i-1];
+      const current_subdivision = edge[i];
+      const segment_length = euclidean_distance(previous_subdivision, current_subdivision);
+      whole_curve_length += segment_length;
     }
+    return whole_curve_length;
+  }
+
+  static culculate_edge_division(edge, segment) {
+    const source = edge[0].clone();
+    const target = edge[edge.length-1].clone();
+    let new_subdivision_points = [];
+    const whole_curve_length = SegmentEdge2.culculate_curve_length(edge);
+    const segment_length = whole_curve_length / (segment + 1);
+
+    new_subdivision_points.push(source); // source
+    for (let i = 1; i < segment+1; i++) {
+      const distance = segment_length * i;
+      let original_distance = 0.0;
+      let j = 1;
+      for (; j < edge.length; j++) {
+        original_distance += euclidean_distance(edge[j-1], edge[j]);
+        if (original_distance > distance) {
+          break;
+        }
+      }
+      // j--;
+      const vec1 = edge[j-1];
+      const vec2 = edge[j];
+      const old_segment_length = euclidean_distance(vec1, vec2);
+      const q = original_distance - distance;
+      const p = old_segment_length - q;
+      const percent_position = p / old_segment_length;
+      // if (i == 1) {
+      //   console.log("distance",distance);
+      //   console.log("original",original_distance);
+      //   console.log("old_segment_length",old_segment_length);
+      //   console.log("p",p);
+      //   console.log("q",q);
+      //   console.log("percent_position",percent_position);
+      // }
+      const new_subdivision = new Coordinate(
+        vec1.x + (vec2.x - vec1.x) * percent_position,
+        vec1.y + (vec2.y - vec1.y) * percent_position
+      );
+      new_subdivision_points.push(new_subdivision);
+    }
+    new_subdivision_points.push(target); // target
+    return new_subdivision_points;
   }
 }
+
 
 export class Edges extends Array{
   constructor(scene) {
@@ -211,7 +263,7 @@ export class Edges extends Array{
   createSegmentedEdges(segmentNum) {
     const segmentedEdges = new Edges();
     for (const edge of this) {
-      segmentedEdges.push(new SegmentEdge(edge, segmentNum));
+      segmentedEdges.push(new SegmentEdge2(edge, segmentNum));
     }
     return segmentedEdges;
   }
