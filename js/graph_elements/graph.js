@@ -127,6 +127,7 @@ export class Graph {
   }
 
   bundle() {
+    this.unbundle();
     if (this.bundleState) {
       console.error("Graph is already bundled.");
       return;
