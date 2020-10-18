@@ -24,7 +24,7 @@ async function init() {
     viewer.addObject(G.E.getEdgeObjects(palette.c2));
     viewer.addMouseUpEvent(G.autoBundling.bind(G));
 
-    const manualBundle = new CheckboxWithFunc("switchManual",G.bundle.bind(G), G.unbundle.bind(G));
+    const manualBundle = new CheckboxWithFunc("switchManual",G.unbundle.bind(G), G.unbundle.bind(G));
 
     await tick();
 

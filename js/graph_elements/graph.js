@@ -7,7 +7,7 @@ import { Edge, Edges, AnimationEdges} from "./edge.js"
 import { Palette } from "../ui/palette.js"
 
 export class Graph {
-  constructor(viewer, palette= new Palette(), state) {
+  constructor(viewer, palette=new Palette(), state) {
     this.viewer = viewer
     this.scene = viewer.scene;
 
@@ -123,14 +123,7 @@ export class Graph {
   }
   
   executeBundling() {
-    if (this.state.subdivisionNumber.value === "fixed") {
-      this.continuousBundle();
-    } else if (this.state.subdivisionNumber.value === "flexible") {
-      this.proportional_bundle();
-    } else {
-      console.log("else");
-      this.bundle();
-    }
+    this.continuousBundle();
   }
 
   bundle() {
@@ -215,10 +208,10 @@ export class Graph {
   }
 
   unbundle() {
+    console.log("unbundle");
     if (!this.bundleState) {
       return;
     }
-
     this.AQ.push( [this.AE_in.disposing] )
     this.AQ.push( [this.AE_inout.unbundling] );
     this.AQ.push( [this.E.showing] );
@@ -237,20 +230,31 @@ export class Graph {
 
     this.E_inout.map(edge => {edge.computeBoundaryPoint(current_viewport); return edge});
 
-    const ALL_SUBDIVISION_NUM = 100 * 64;
-    const alpha = this.E_inout.length;
-    const beta = this.E_in.length;
-    const ratio = 10;
-    const inout_subdivision_num = ALL_SUBDIVISION_NUM * (alpha / (alpha + ratio * beta))
-    const in_subdivision_num = ALL_SUBDIVISION_NUM * ((ratio * beta) / (alpha + ratio * beta))
 
-    const C = 6;
-    const P_initial = 1;
-    
-    const P_rate_inout = Math.pow(inout_subdivision_num / ((alpha + beta) * P_initial), (1 / C));
-    const P_rate_in = Math.pow(in_subdivision_num / ((alpha + beta) * P_initial), (1 / C));
-    const final_inout_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
-    const final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_in, C);
+    let final_inout_subdivision_num, final_in_subdivision_num, P_rate_inout, P_rate_in;
+    if (this.state.subdivisionNumber.value === "fixed") {
+      const ALL_SUBDIVISION_NUM = 100 * 64;
+      const alpha = this.E_inout.length;
+      const beta = this.E_in.length;
+      const ratio = 10;
+      const inout_subdivision_num = ALL_SUBDIVISION_NUM * (alpha / (alpha + ratio * beta))
+      const in_subdivision_num = ALL_SUBDIVISION_NUM * ((ratio * beta) / (alpha + ratio * beta))
+      const C = 6;
+      const P_initial = 1;
+      P_rate_inout = Math.pow(inout_subdivision_num / ((alpha + beta) * P_initial), (1 / C));
+      P_rate_in = Math.pow(in_subdivision_num / ((alpha + beta) * P_initial), (1 / C));
+      final_inout_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
+      final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_in, C);
+    } else if (this.state.subdivisionNumber.value === "flexible") {
+      const C = 6;
+      const P_rate = 1.1;
+      const P_initial = 1;
+      const proportion = this.viewer.initialViewport.diagonal / current_viewport.diagonal;
+      P_rate_inout = P_rate_in = Math.pow( (Math.pow(P_rate,C) * proportion), (1.0/C));
+      final_inout_subdivision_num = final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
+    } else {
+      console.error("Unexpected state.");
+    }
 
     let E_inout_splited, E_in_splited;
 
@@ -330,6 +334,8 @@ export class Graph {
 
     this.AQ.push( [this.E.hiding] );
     this.AQ.push( [this.AE_in.bundling,this.AE_inout.bundling] );
+
+    this.bundleState = true;
   }
 }
 

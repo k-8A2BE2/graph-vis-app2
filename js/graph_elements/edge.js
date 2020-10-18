@@ -76,14 +76,14 @@ export class Edge extends Array {
 
   attachSegmentPoint(segment) {
     let node_list = [];
-    node_list.push(this[0]);
+    node_list.push(this[0].clone());
     for (var i = 1; i < segment+1; i++) {
       const x = this[0].x + (this[this.length-1].x - this[0].x) / (segment + 1) * i;
       const y = this[0].y + (this[this.length-1].y - this[0].y) / (segment + 1) * i;
       const z = this[0].z + (this[this.length-1].z - this[0].z) / (segment + 1) * i;
       node_list.push(new Node(x,y,z));
     }
-    node_list.push(this[this.length-1]);
+    node_list.push(this[this.length-1].clone());
     return new Edge(node_list,this.src,this.tar)
   }
 
@@ -187,9 +187,9 @@ export class Edges extends Array{
   }
 
   disposeEdgesObject() {
-    this.geometry.dispose();
-    this.material.dispose();
-    this.scene.remove(this.objects);
+      // this.geometry.dispose();
+      // this.material.dispose();
+      // this.scene.remove(this.objects);
     return false;
   }
 
