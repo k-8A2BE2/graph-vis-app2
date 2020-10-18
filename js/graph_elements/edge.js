@@ -87,6 +87,11 @@ export class Edge extends Array {
     return new Edge(node_list,this.src,this.tar)
   }
 
+  subdivide(segments) {
+    const coordinateList = EdgeFuncs.culculate_edge_division(this, segments);
+    return new Edge(coordinateList, this.idx, this.src, this.tar);
+  }
+
 
 }
 
@@ -102,67 +107,6 @@ export class SegmentEdge extends Edge {
     }
     coordinate_list.push(edge[edge.length-1].clone());
     super(coordinate_list, edge.idx, edge.src, edge.tar);
-  }
-}
-
-export class SegmentEdge2 extends Edge {
-  constructor(edge, segment) {
-    const coordinateList = SegmentEdge2.culculate_edge_division(edge, segment);
-    super(coordinateList, edge.idx, edge.src, edge.tar);
-  }
-
-  static culculate_curve_length(edge) {
-    let whole_curve_length = 0.0;
-    for (let i = 1; i < edge.length; i++) {
-      const previous_subdivision = edge[i-1];
-      const current_subdivision = edge[i];
-      const segment_length = euclidean_distance(previous_subdivision, current_subdivision);
-      whole_curve_length += segment_length;
-    }
-    return whole_curve_length;
-  }
-
-  static culculate_edge_division(edge, segment) {
-    const source = edge[0].clone();
-    const target = edge[edge.length-1].clone();
-    let new_subdivision_points = [];
-    const whole_curve_length = SegmentEdge2.culculate_curve_length(edge);
-    const segment_length = whole_curve_length / (segment + 1);
-
-    new_subdivision_points.push(source); // source
-    for (let i = 1; i < segment+1; i++) {
-      const distance = segment_length * i;
-      let original_distance = 0.0;
-      let j = 1;
-      for (; j < edge.length; j++) {
-        original_distance += euclidean_distance(edge[j-1], edge[j]);
-        if (original_distance > distance) {
-          break;
-        }
-      }
-      // j--;
-      const vec1 = edge[j-1];
-      const vec2 = edge[j];
-      const old_segment_length = euclidean_distance(vec1, vec2);
-      const q = original_distance - distance;
-      const p = old_segment_length - q;
-      const percent_position = p / old_segment_length;
-      // if (i == 1) {
-      //   console.log("distance",distance);
-      //   console.log("original",original_distance);
-      //   console.log("old_segment_length",old_segment_length);
-      //   console.log("p",p);
-      //   console.log("q",q);
-      //   console.log("percent_position",percent_position);
-      // }
-      const new_subdivision = new Coordinate(
-        vec1.x + (vec2.x - vec1.x) * percent_position,
-        vec1.y + (vec2.y - vec1.y) * percent_position
-      );
-      new_subdivision_points.push(new_subdivision);
-    }
-    new_subdivision_points.push(target); // target
-    return new_subdivision_points;
   }
 }
 
@@ -243,10 +187,9 @@ export class Edges extends Array{
   }
 
   disposeEdgesObject() {
-    console.log("dispose edges");
-    // this.geometry.dispose();
-    // this.material.dispose();
-    // this.scene.remove(this.objects);
+    this.geometry.dispose();
+    this.material.dispose();
+    this.scene.remove(this.objects);
     return false;
   }
 
@@ -261,7 +204,7 @@ export class Edges extends Array{
   createSegmentedEdges(segmentNum) {
     const segmentedEdges = new Edges();
     for (const edge of this) {
-      segmentedEdges.push(new SegmentEdge2(edge, segmentNum));
+      segmentedEdges.push(edge.subdivide(segmentNum));
     }
     return segmentedEdges;
   }
@@ -385,4 +328,52 @@ export class AnimationEdges {
       this.scene.remove(this.FrameEdgesObject);
       return false;
     }
+}
+
+
+class EdgeFuncs {
+  static culculate_curve_length(edge) {
+    let whole_curve_length = 0.0;
+      for (let i = 1; i < edge.length; i++) {
+        const previous_subdivision = edge[i-1];
+        const current_subdivision = edge[i];
+        const segment_length = euclidean_distance(previous_subdivision, current_subdivision);
+        whole_curve_length += segment_length;
+      }
+      return whole_curve_length;
   }
+
+  static culculate_edge_division(edge, segment) {
+    const source = edge[0].clone();
+    const target = edge[edge.length-1].clone();
+    let new_subdivision_points = [];
+    const whole_curve_length = EdgeFuncs.culculate_curve_length(edge);
+    const segment_length = whole_curve_length / (segment + 1);
+
+    new_subdivision_points.push(source); // source
+    for (let i = 1; i < segment+1; i++) {
+      const distance = segment_length * i;
+      let original_distance = 0.0;
+      let j = 1;
+      for (; j < edge.length; j++) {
+        original_distance += euclidean_distance(edge[j-1], edge[j]);
+        if (original_distance > distance) {
+          break;
+        }
+      }
+      const vec1 = edge[j-1];
+      const vec2 = edge[j];
+      const old_segment_length = euclidean_distance(vec1, vec2);
+      const q = original_distance - distance;
+      const p = old_segment_length - q;
+      const percent_position = p / old_segment_length;
+      const new_subdivision = new Coordinate(
+        vec1.x + (vec2.x - vec1.x) * percent_position,
+        vec1.y + (vec2.y - vec1.y) * percent_position
+      );
+      new_subdivision_points.push(new_subdivision);
+    }
+    new_subdivision_points.push(target); // target
+    return new_subdivision_points;
+  }
+}

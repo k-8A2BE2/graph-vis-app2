@@ -3,7 +3,7 @@ import {boundaryFDEBwithMoveableCenter as BFDEBMC } from "../bundling/boundaryFD
 import {FDEB as normalFDEB} from "../bundling/FDEB.js"
 import { culculate_final_subdivision_num } from "../helper/subfunctions.js"
 import { Node, Nodes } from "./node.js"
-import { Edge, SegmentEdge, Edges, AnimationEdges, SegmentEdge2} from "./edge.js"
+import { Edge, Edges, AnimationEdges} from "./edge.js"
 import { Palette } from "../ui/palette.js"
 
 export class Graph {
@@ -264,7 +264,7 @@ export class Graph {
         let flag = false;
         for (const c_io of this.E_inout_curves) {
           if (e_io.idx === c_io.idx) {
-            E_inout_splited.push(new SegmentEdge2(c_io, final_inout_subdivision_num));
+            E_inout_splited.push(c_io.subdivide(final_inout_subdivision_num));
             flag = true;
             break;
           }
@@ -276,7 +276,7 @@ export class Graph {
 
         for (const c_in of this.E_in_curves) {
           if (e_io.idx === c_in.idx) {
-            E_inout_splited.push(new SegmentEdge2(c_in, final_inout_subdivision_num));
+            E_inout_splited.push(c_in.subdivide(final_inout_subdivision_num));
             flag = true;
             break;
           }
@@ -285,7 +285,7 @@ export class Graph {
         if (flag) {
           continue;
         } else {
-          E_inout_splited.push(new SegmentEdge2(e_io, final_inout_subdivision_num));
+          E_inout_splited.push(e_io.subdivide(final_inout_subdivision_num));
         }
       }  
 
@@ -293,7 +293,7 @@ export class Graph {
         let flag = false;
         for (const c_io of this.E_inout_curves) {
           if (e_in.idx === c_io.idx) {
-            E_in_splited.push(new SegmentEdge2(c_io, final_in_subdivision_num));
+            E_in_splited.push(c_io.subdivide(final_in_subdivision_num));
             flag = true;
             break;
           }
@@ -305,7 +305,7 @@ export class Graph {
 
         for (const c_in of this.E_in_curves) {
           if (e_in.idx === c_in.idx) {
-            E_in_splited.push(new SegmentEdge2(c_in, final_in_subdivision_num));
+            E_in_splited.push(c_in.subdivide(final_in_subdivision_num));
             flag = true;
             break;
           }
@@ -314,7 +314,7 @@ export class Graph {
         if (flag) {
           continue;
         } else {
-          E_in_splited.push(new SegmentEdge2(e_in, final_in_subdivision_num));
+          E_in_splited.push(e_in.subdivide(final_in_subdivision_num));
         }
       }  
     }
