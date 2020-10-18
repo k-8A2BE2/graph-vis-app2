@@ -3,7 +3,7 @@ import {boundaryFDEBwithMoveableCenter as BFDEBMC } from "../bundling/boundaryFD
 import {FDEB as normalFDEB} from "../bundling/FDEB.js"
 import { culculate_final_subdivision_num } from "../helper/subfunctions.js"
 import { Node, Nodes } from "./node.js"
-import { Edge, SegmentEdge, Edges, AnimationEdges} from "./edge.js"
+import { Edge, SegmentEdge, Edges, AnimationEdges, SegmentEdge2} from "./edge.js"
 import { Palette } from "../ui/palette.js"
 
 export class Graph {
@@ -21,6 +21,9 @@ export class Graph {
     this.E_in = new Edges(this.scene);
     this.E_inout = new Edges(this.scene);
     this.E_out = new Edges(this.scene);
+
+    this.E_inout_curves = undefined;
+    this.E_in_curves = undefined;
 
     this.AE_inout = undefined;
     this.AE_in = undefined;
@@ -108,7 +111,7 @@ export class Graph {
     if ( viewer.isCameraMove() ) {
       this.N.checkInOut(viewer.getCurrentViewport());
       this.classifyingEdges();
-      this.unbundle();
+      // this.unbundle();
     }
     this.AQ.animateQueue();
   }
@@ -121,7 +124,7 @@ export class Graph {
   
   executeBundling() {
     if (this.state.subdivisionNumber.value === "fixed") {
-      this.bundle();
+      this.continuousBundle();
     } else if (this.state.subdivisionNumber.value === "flexible") {
       this.proportional_bundle();
     } else {
@@ -156,9 +159,7 @@ export class Graph {
     const final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_in, C);
 
     const E_inout_splited = this.E_inout.createSegmentedEdges(final_inout_subdivision_num);
-    const E_in_splited = this.E_in_splited = this.E_in.createSegmentedEdges(final_in_subdivision_num);
-
-    // console.log(E_inout_splited);
+    const E_in_splited  = this.E_in.createSegmentedEdges(final_in_subdivision_num);
 
     const E_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.8, P_rate: P_rate_inout}).execute();
     const E_in_curves = new normalFDEB({nodes: this.N, edges: this.E_in, compatibility_threshold: 0.6, P_rate: P_rate_in}).execute();
@@ -217,13 +218,121 @@ export class Graph {
     if (!this.bundleState) {
       return;
     }
+
     this.AQ.push( [this.AE_in.disposing] )
     this.AQ.push( [this.AE_inout.unbundling] );
     this.AQ.push( [this.E.showing] );
     this.AQ.push( [this.AE_inout.disposing] );
     this.bundleState = false;
   }
+
+  continuousBundle() {
+
+    if (!(this.AE_inout === undefined)) {
+      this.AQ.push( [this.AE_in.disposing] )
+      this.AQ.push( [this.AE_inout.disposing] );
+    }
+
+    const current_viewport = this.viewer.getCurrentViewport();
+
+    this.E_inout.map(edge => {edge.computeBoundaryPoint(current_viewport); return edge});
+
+    const ALL_SUBDIVISION_NUM = 100 * 64;
+    const alpha = this.E_inout.length;
+    const beta = this.E_in.length;
+    const ratio = 10;
+    const inout_subdivision_num = ALL_SUBDIVISION_NUM * (alpha / (alpha + ratio * beta))
+    const in_subdivision_num = ALL_SUBDIVISION_NUM * ((ratio * beta) / (alpha + ratio * beta))
+
+    const C = 6;
+    const P_initial = 1;
+    
+    const P_rate_inout = Math.pow(inout_subdivision_num / ((alpha + beta) * P_initial), (1 / C));
+    const P_rate_in = Math.pow(in_subdivision_num / ((alpha + beta) * P_initial), (1 / C));
+    const final_inout_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
+    const final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_in, C);
+
+    let E_inout_splited, E_in_splited;
+
+    if (this.E_inout_curves === undefined && this.E_in_curves === undefined ) {
+      E_inout_splited = this.E_inout.createSegmentedEdges(final_inout_subdivision_num);
+      E_in_splited = this.E_in.createSegmentedEdges(final_in_subdivision_num);
+    } else {
+      E_inout_splited = new Edges(this.scece);
+      E_in_splited = new Edges(this.scece);
+      for (const e_io of this.E_inout) {
+        let flag = false;
+        for (const c_io of this.E_inout_curves) {
+          if (e_io.idx === c_io.idx) {
+            E_inout_splited.push(new SegmentEdge2(c_io, final_inout_subdivision_num));
+            flag = true;
+            break;
+          }
+        }
+
+        if (flag) {
+          continue;
+        }
+
+        for (const c_in of this.E_in_curves) {
+          if (e_io.idx === c_in.idx) {
+            E_inout_splited.push(new SegmentEdge2(c_in, final_inout_subdivision_num));
+            flag = true;
+            break;
+          }
+        }
+
+        if (flag) {
+          continue;
+        } else {
+          E_inout_splited.push(new SegmentEdge2(e_io, final_inout_subdivision_num));
+        }
+      }  
+
+      for (const e_in of this.E_in) {
+        let flag = false;
+        for (const c_io of this.E_inout_curves) {
+          if (e_in.idx === c_io.idx) {
+            E_in_splited.push(new SegmentEdge2(c_io, final_in_subdivision_num));
+            flag = true;
+            break;
+          }
+        }
+
+        if (flag) {
+          continue;
+        }
+
+        for (const c_in of this.E_in_curves) {
+          if (e_in.idx === c_in.idx) {
+            E_in_splited.push(new SegmentEdge2(c_in, final_in_subdivision_num));
+            flag = true;
+            break;
+          }
+        }
+
+        if (flag) {
+          continue;
+        } else {
+          E_in_splited.push(new SegmentEdge2(e_in, final_in_subdivision_num));
+        }
+      }  
+    }
+    
+    this.E_inout_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.8, P_rate: P_rate_inout}).execute();
+    this.E_in_curves = new normalFDEB({nodes: this.N, edges: this.E_in, compatibility_threshold: 0.6, P_rate: P_rate_in}).execute();
+    
+    this.AE_inout = new AnimationEdges(this.viewer.scene, E_inout_splited, this.E_inout_curves, 12);
+    this.AE_in = new AnimationEdges(this.viewer.scene, E_in_splited, this.E_in_curves, 12);
+
+    this.viewer.addObject(this.AE_inout.initializeFrameEdges(this.palette.c2));
+    this.viewer.addObject(this.AE_in.initializeFrameEdges(this.palette.c4));
+
+    this.AQ.push( [this.E.hiding] );
+    this.AQ.push( [this.AE_in.bundling,this.AE_inout.bundling] );
+  }
 }
+
 
 
 

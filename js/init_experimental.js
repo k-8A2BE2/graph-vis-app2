@@ -26,8 +26,6 @@ async function init() {
 
     const manualBundle = new CheckboxWithFunc("switchManual",G.bundle.bind(G), G.unbundle.bind(G));
 
-
-
     await tick();
 
     async function tick() {

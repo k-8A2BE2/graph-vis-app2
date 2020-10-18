@@ -311,7 +311,7 @@ export class FDEB {
           node_list.push(n);
         }
         node_list.push(this.subdivision_points_for_edge[i][this.subdivision_points_for_edge[i].length-1]);
-        E.push(new Edge(node_list));
+        E.push(new Edge(node_list, this.data_edges[i].idx));
       }
       return E;
     }

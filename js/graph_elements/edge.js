@@ -107,7 +107,6 @@ export class SegmentEdge extends Edge {
 
 export class SegmentEdge2 extends Edge {
   constructor(edge, segment) {
-    console.log(segment);
     const coordinateList = SegmentEdge2.culculate_edge_division(edge, segment);
     super(coordinateList, edge.idx, edge.src, edge.tar);
   }
@@ -166,7 +165,6 @@ export class SegmentEdge2 extends Edge {
     return new_subdivision_points;
   }
 }
-
 
 export class Edges extends Array{
   constructor(scene) {
@@ -268,6 +266,14 @@ export class Edges extends Array{
     return segmentedEdges;
   }
 
+  clone() {
+    const E = new Edges(this.scene);
+    for (const edge of this) {
+      E.push(edge.clone());
+    }
+    return E;
+  }
+
 
 }
 
@@ -299,8 +305,10 @@ export class AnimationEdges {
     }
   
     completeEdges() {
+      
+
       this.AnimationEdges = new Array(this.frame)
-      for (var i = 0; i < this.AnimationEdges.length; i++) {
+      for (var i = 0; i < this.frame; i++) {
         this.AnimationEdges[i] = new Array();
       }
   
