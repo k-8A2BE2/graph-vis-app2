@@ -40,7 +40,20 @@ export class Pulldown {
     initializeChangeEvent() {
         this.element.addEventListener("change", () => {
             this.value = this.element.value;
-            console.log(this.state);
+            console.log(this.value);
+        });
+    }
+}
+
+export class Button {
+    constructor(id, func) {
+        this.element = document.getElementById(id);
+        this.initializeClickEvent(func);
+    }
+
+    initializeClickEvent(func) {
+        this.element.addEventListener("click", () => {
+            func();
         });
     }
 }

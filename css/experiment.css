@@ -40,6 +40,11 @@ body {
     justify-content: center;
 }
 
+.buttonPanel {
+    display: flex;
+    justify-content: center;
+}
+
 .MenuTag {
     color: #dfdfdf;
 }
