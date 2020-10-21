@@ -26,9 +26,9 @@ async function init() {
 
     const manualBundle = new CheckboxWithFunc("switchManual",G.unbundle.bind(G), G.unbundle.bind(G));
 
-    await tick();
+    tick();
 
-    async function tick() {
+    function tick() {
         viewer.updateInitialize();
         G.update(viewer);
         viewer.updateFinalize();
@@ -37,7 +37,3 @@ async function init() {
 
     
 }
-
-// document.getElementById("test").onclick = function test() {
-//     console.log("aaaa");
-// };
