@@ -39,19 +39,17 @@ export class Graph {
 
     let data = 0;
     $.ajax({
-      type        : "POST",
-      url         : "/xml",
+      type        : "GET",
+      url         : "../../material/airlines.xml",
       contentType :'application/xml',
       data        : data,
-      async       : false,                    //true:非同期(デフォルト), false:同期
-      dataType    : "text",                 // これは渡すデータのtypeじゃなくて返り値の型
+      async       : false,                    // true:非同期(デフォルト), false:同期
+      dataType    : "text",                   // これは渡すデータのtypeじゃなくて返り値の型
       success     : function(d) {
-        console.log("SUCCESS!")
-        // console.log(d);
         xml_data = xml_parser.parseFromString(d, "application/xml");
       },
       error       : function(XMLHttpRequest, textStatus, errorThrown) {
-        console.log("リクエスト時になんらかのエラーが発生しました\n" + textStatus +":" + errorThrown);
+        console.error(textStatus + ":" + errorThrown);
       }
     });
 
