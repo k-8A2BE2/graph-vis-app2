@@ -21,7 +21,7 @@ export class State {
         this.uiCc = new Checkbox("switchCc");
         this.uiCd = new Checkbox("switchCd");
         this.uiAutoBundle = new Checkbox("switchAuto");
-        this.uisubdivisionNumber = new Pulldown("pulldownSubdivision");
+        this.uiSubdivisionNumber = new Pulldown("pulldownSubdivision");
     }
 
     get AutoBundle() {

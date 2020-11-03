@@ -40,7 +40,6 @@ export class Pulldown {
     initializeChangeEvent() {
         this.element.addEventListener("change", () => {
             this.value = this.element.value;
-            console.log(this.value);
         });
     }
 }

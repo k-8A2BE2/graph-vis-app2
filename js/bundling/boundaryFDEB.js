@@ -246,7 +246,8 @@ export class boundaryFDEBwithMoveableCenter extends boundaryFDEB {
   }
 
   compatibility_score(P, Q) {
-    return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
+    // return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
+    return this.center_angle_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
   }
 
 }

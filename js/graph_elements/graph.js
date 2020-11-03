@@ -255,6 +255,11 @@ export class Graph {
       const proportion = this.viewer.initialViewport.diagonal / current_viewport.diagonal;
       P_rate_inout = P_rate_in = Math.pow( (Math.pow(P_rate,C) * proportion), (1.0/C));
       final_inout_subdivision_num = final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
+    } else if (this.state.subdivisionNumber === "normal") {
+      const C = 6;
+      const P_initial = 1;
+      P_rate_inout = P_rate_in = 2;
+      final_inout_subdivision_num = final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
     } else {
       console.error("Unexpected state : ", this.state.subdivisionNumber);
     }
@@ -326,7 +331,8 @@ export class Graph {
       }  
     }
     
-    this.E_inout_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.7, P_rate: P_rate_inout}).execute();
+    console.log(P_rate_inout,final_inout_subdivision_num);
+    this.E_inout_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.6, P_rate: P_rate_inout}).execute();
     this.E_in_curves = new normalFDEB({nodes: this.N, edges: this.E_in, compatibility_threshold: 0.6, P_rate: P_rate_in}).execute();
     
     this.AE_inout = new AnimationEdges(this.viewer.scene, E_inout_splited, this.E_inout_curves, 12);
