@@ -14,6 +14,7 @@ export class Viewer {
 
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000);
+        // this.camera = new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, 1, 5000);
         this.camera.position.set(0, 0, +1000);
 
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);

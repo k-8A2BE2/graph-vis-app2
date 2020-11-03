@@ -3,9 +3,9 @@ import { Animation } from "./animation.js"
 import { euclidean_distance, intersection, judge_intersection } from "../helper/subfunctions.js"
 
 export class Edge extends Array {
-  constructor(node_list, idx=undefined, src=undefined, tar=undefined) {
-    super(...node_list);
-    this.segments = node_list.length;
+  constructor(coordinate_list, idx=undefined, src=undefined, tar=undefined) {
+    super(...coordinate_list);
+    this.segments = coordinate_list.length;
     this.idx = idx; // edge index
     this.src = src; // source node index
     this.tar = tar; // target node index
@@ -322,7 +322,6 @@ export class AnimationEdges {
     }
   
     disposeEdgesObject() {
-      console.log("dispose");
       this.FrameEdgesGeometry.dispose();
       this.FrameEdgesMaterial.dispose();
       this.scene.remove(this.FrameEdgesObject);

@@ -20,7 +20,7 @@ async function init() {
 
     G.import_xml()
     
-    viewer.addObject(G.N.getNodeObjects(palette.c5));
+    viewer.addObject(G.N_visual.getNodeObjects(palette.c5));
     viewer.addObject(G.E.getEdgeObjects(palette.c2));
     viewer.addMouseUpEvent(G.autoBundling.bind(G));
 

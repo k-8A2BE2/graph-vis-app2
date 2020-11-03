@@ -16,6 +16,7 @@ export class Graph {
     this.state = state;
 
     this.N = new Nodes();
+    this.N_visual = new Nodes();
     this.E = new Edges(this.scene);
 
     this.E_in = new Edges(this.scene);
@@ -79,6 +80,7 @@ export class Graph {
       const y = (((raw_nodes[i].childNodes[5].textContent-0) * (-1) - min_y)/(max_y - min_y) -0.5) * Max_y - 500;
       const id = raw_nodes[i].getAttribute("id")-0;
       this.N.push(new Node(x, y, 0, id));
+      this.N_visual.push(new Node(x, y, 0.1, id));
     }
 
     for (var i = 0; i < raw_edges.length; i++) {
@@ -116,7 +118,6 @@ export class Graph {
 
   autoBundling() {
     if (this.state.AutoBundle) {
-      console.log(this.state);
       this.executeBundling();
     }
   }
@@ -233,10 +234,9 @@ export class Graph {
 
     this.E_inout.map(edge => {edge.computeBoundaryPoint(current_viewport); return edge});
 
-
     let final_inout_subdivision_num, final_in_subdivision_num, P_rate_inout, P_rate_in;
     if (this.state.subdivisionNumber === "fixed") {
-      const ALL_SUBDIVISION_NUM = 100 * 64;
+      const ALL_SUBDIVISION_NUM = 300 * 64;
       const alpha = this.E_inout.length;
       const beta = this.E_in.length;
       const ratio = 10;
@@ -326,7 +326,7 @@ export class Graph {
       }  
     }
     
-    this.E_inout_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.8, P_rate: P_rate_inout}).execute();
+    this.E_inout_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.7, P_rate: P_rate_inout}).execute();
     this.E_in_curves = new normalFDEB({nodes: this.N, edges: this.E_in, compatibility_threshold: 0.6, P_rate: P_rate_in}).execute();
     
     this.AE_inout = new AnimationEdges(this.viewer.scene, E_inout_splited, this.E_inout_curves, 12);

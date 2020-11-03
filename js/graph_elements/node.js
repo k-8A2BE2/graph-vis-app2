@@ -4,11 +4,14 @@ export class Node extends Coordinate{
     constructor(x, y, z=0, id=undefined) {
       super(x,y,z);
       this.id = id;
-      this.isIn = undefined;
     }
   
     clone() {
       return new Node(this[0], this[1], this[2], this.id);
+    }
+
+    cloneAsCoordinate({x = this[0], y = this[1], z = this[2]}) {
+      return new Coordinate(x,y,z);
     }
   }
   

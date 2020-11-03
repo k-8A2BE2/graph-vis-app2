@@ -1,6 +1,7 @@
 export class Coordinate extends Array{
     constructor(x,y,z=0) {
-      super(x,y,z)
+      super(x,y,z);
+      this.isIn = undefined;
     }
   
     get x() {
