@@ -16,21 +16,6 @@ export class Viewer {
         this.renderer.setSize(width, height);
 
         this.scene = new THREE.Scene();
-        // this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000);
-        // // this.camera = new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, 1, 5000);
-        // this.camera.position.set(0, 0, +1000);
-
-        // this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-        // this.controls.screenSpacePanning = true;
-        // this.controls.enableRotate = false;
-
-        // this.grid = new THREE.GridHelper(1000,10);
-        // this.grid.rotation.x = Math.PI/2;
-        // this.scene.add(this.grid);
-
-        // this.initialViewport = this.getCurrentViewport();
-
-        // this.previousCameraPosition = this.camera.position.clone();
     }
 
     initialze() {
