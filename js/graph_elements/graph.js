@@ -97,7 +97,7 @@ export class Graph {
     this.E_inout = new Edges(this.scene);
     this.E_out = new Edges(this.scene);
     for (var i = 0; i < this.E.length; i++) {
-      if ( this.E[i][0].isIn && this.E[i][this.E[i].length-1].isIn) {
+      if ( this.E[i][0].isIn && this.E[i][this.E[i].length-1].isIn ) {
         this.E_in.push(this.E[i].clone());
       }else if ( !this.E[i][0].isIn && !this.E[i][this.E[i].length-1].isIn ) {
         this.E_out.push(this.E[i].clone());
@@ -110,7 +110,7 @@ export class Graph {
   update(viewer) {
     if ( viewer.isCameraMove() ) {
       this.N.checkInOut(viewer.getCurrentViewport());
-      this.classifyingEdges();
+      // this.classifyingEdges();
       // this.unbundle();
     }
     this.AQ.animateQueue();
@@ -123,6 +123,7 @@ export class Graph {
   }
   
   executeBundling() {
+    this.classifyingEdges();
     this.continuousBundle();
   }
 

@@ -1,4 +1,5 @@
 import { Coordinate } from "./coordinate.js"
+import { Nodes, Node } from "./node.js"
 import { euclidean_distance, intersection, judge_intersection } from "../helper/subfunctions.js"
 
 export class Viewport extends Array{
@@ -74,6 +75,15 @@ export class Viewport extends Array{
       } else {
         throw "Error: unexpected azimath."
       }
+    }
+
+    getViewportAsNodes() {
+      const rect = new Nodes();
+      rect.push(this.lower_left);
+      rect.push(this.upper_left);
+      rect.push(this.lower_right);
+      rect.push(this.upper_right);
+      return rect;
     }
   
   }

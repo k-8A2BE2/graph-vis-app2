@@ -1,5 +1,5 @@
 import { Graph } from "./graph_elements/graph.js"
-import { Viewer } from "./ui/viewer.js"
+import { Viewer, OrthographicViewer } from "./ui/viewer.js"
 import { Palette } from "./ui/palette.js"
 import { State } from "./ui/state.js"
 import { Button, CheckboxWithFunc } from "./ui/uiCompoents.js";
@@ -14,7 +14,9 @@ async function init() {
 
     await Promise.all([palette.experiment(), state.initialize()])
 
-    const viewer = new Viewer(960, 540, palette);
+    // const viewer = new Viewer(960, 540, palette);
+    const viewer = new OrthographicViewer(960, 540, palette);
+    viewer.initialze();
 
     const G = new Graph(viewer, palette, state);
 
@@ -25,8 +27,12 @@ async function init() {
     viewer.addMouseUpEvent(G.autoBundling.bind(G));
 
     // const manualBundle = new CheckboxWithFunc("switchManual",G.unbundle.bind(G), G.unbundle.bind(G));
-    const manualBundle = new Button("buttonBundle", G.executeBundling.bind(G));
-    const manualUnundle = new Button("buttonUnbundle", G.unbundle.bind(G));
+    new Button("buttonBundle", G.executeBundling.bind(G));
+    new Button("buttonUnbundle", G.unbundle.bind(G));
+    new Button("funcTest", () => {
+        const cv = viewer.getCurrentViewport();
+        viewer.addObject(cv.getViewportAsNodes().getNodeObjects(palette.c4));
+    })
 
     tick();
 
@@ -35,6 +41,7 @@ async function init() {
         G.update(viewer);
         viewer.updateFinalize();
         requestAnimationFrame(tick);
+        // console.log(viewer.camera.zoom)
     }
 
     

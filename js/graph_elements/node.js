@@ -54,11 +54,7 @@ export class Node extends Coordinate{
   
     checkInOut(viewport) {
       for (const n of this) {
-        if (viewport.isIn(n.x, n.y)) {
-          n.isIn = true;
-        } else {
-          n.isIn = false;
-        }
+        n.isIn = viewport.isIn(n.x, n.y);
       }
     }
   }

@@ -8,30 +8,54 @@ export class Viewer {
             alpha: true,
             antialias: true,
         });
+        this.width = width
+        this.height = height
+
         this.renderer.setClearColor(palette.c1, 1)
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(width, height);
 
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000);
-        // this.camera = new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, 1, 5000);
+        // this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000);
+        // // this.camera = new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, 1, 5000);
+        // this.camera.position.set(0, 0, +1000);
+
+        // this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        // this.controls.screenSpacePanning = true;
+        // this.controls.enableRotate = false;
+
+        // this.grid = new THREE.GridHelper(1000,10);
+        // this.grid.rotation.x = Math.PI/2;
+        // this.scene.add(this.grid);
+
+        // this.initialViewport = this.getCurrentViewport();
+
+        // this.previousCameraPosition = this.camera.position.clone();
+    }
+
+    initialze() {
+        this.initializeCamera();
+        this.initializeController();
+        this.initializeGrid();
+    }
+
+    initializeCamera() {
+        this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 1, 5000);
         this.camera.position.set(0, 0, +1000);
-
-        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.screenSpacePanning = true;
-        this.controls.enableRotate = false;
-
-        this.grid = new THREE.GridHelper(1000,10);
-        this.grid.rotation.x = Math.PI/2;
-        this.scene.add(this.grid);
-
         this.initialViewport = this.getCurrentViewport();
-
         this.previousCameraPosition = this.camera.position.clone();
     }
 
-    test() {
-        console.log("test");
+    initializeController() {
+        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.screenSpacePanning = true;
+        this.controls.enableRotate = false;
+    }
+
+    initializeGrid() {
+        this.grid = new THREE.GridHelper(1000,10);
+        this.grid.rotation.x = Math.PI/2;
+        this.scene.add(this.grid); 
     }
 
     addMouseUpEvent(func) {
@@ -54,7 +78,9 @@ export class Viewer {
     }
 
     isCameraMove() {
-        return !(this.previousCameraPosition.x === this.camera.position.x && this.previousCameraPosition.y === this.camera.position.y && this.previousCameraPosition.z === this.camera.position.z); 
+        return !(this.previousCameraPosition.x === this.camera.position.x
+                && this.previousCameraPosition.y === this.camera.position.y
+                && this.previousCameraPosition.z === this.camera.position.z); 
     }
 
     updateInitialize() {
@@ -65,5 +91,35 @@ export class Viewer {
     updateFinalize() {
         this.renderer.render(this.scene, this.camera); 
         this.previousCameraPosition = this.camera.position.clone();
+    }
+}
+
+export class OrthographicViewer extends Viewer {
+    initializeCamera() {
+        this.camera = new THREE.OrthographicCamera(-this.width/2, this.width/2, this.height/2, -this.height/2, 1, 5000);
+        this.camera.position.set(0, 0, +1000);
+        this.initialViewport = this.getCurrentViewport();
+        this.previousCameraPosition = this.camera.position.clone();
+    }
+
+    getCurrentViewport() {
+        const max_x = this.camera.position.x + (this.width / (2 * this.camera.zoom));
+        const min_x = this.camera.position.x - (this.width / (2 * this.camera.zoom));
+        const max_y = this.camera.position.y + (this.height / (2 * this.camera.zoom));
+        const min_y = this.camera.position.y - (this.height / (2 * this.camera.zoom));
+        return new Viewport([min_x, min_y, max_x, max_y]);
+    }
+
+    isCameraMove() {
+        return !(this.previousCameraPosition.x === this.camera.position.x
+                && this.previousCameraPosition.y === this.camera.position.y
+                && this.previousCameraPosition.z === this.camera.position.z
+                && this.previousCameraZoom === this.camera.zoom); 
+    }
+
+    updateFinalize() {
+        this.renderer.render(this.scene, this.camera); 
+        this.previousCameraPosition = this.camera.position.clone();
+        this.previousCameraZoom = this.camera.zoom;
     }
 }
