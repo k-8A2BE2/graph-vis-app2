@@ -15,7 +15,7 @@ export class Node extends Coordinate{
     }
   }
   
-  export class Nodes extends Array{
+export class Nodes extends Array{
     constructor() {
       super();
       this.objects = undefined;
@@ -57,4 +57,4 @@ export class Node extends Coordinate{
         n.isIn = viewport.isIn(n.x, n.y);
       }
     }
-  }
+}
