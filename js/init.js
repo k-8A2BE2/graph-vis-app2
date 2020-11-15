@@ -5,9 +5,10 @@ import { State } from "./ui/state.js"
 window.addEventListener('load', init);
 
 async function init() {
-  const viewer = new Viewer();
   const palette = new Palette();
   const state = new State();
+  const viewer = new Viewer();
+  viewer.initialze();
 
   const G = new Graph(viewer, palette, state);
 
