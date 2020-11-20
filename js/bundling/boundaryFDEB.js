@@ -1,6 +1,7 @@
 import { Coordinate } from "../graph_elements/coordinate.js"
 import { euclidean_distance } from "../helper/subfunctions.js"
 import { FDEB } from "./FDEB.js"
+import { Edge, Edges } from "../graph_elements/edge.js"
 
 export class boundaryFDEB extends FDEB{
 
@@ -43,8 +44,15 @@ export class boundaryFDEB extends FDEB{
 
     culculate_edge_division(P, idx, ratio) {
       const edge = this.data_edges[idx];
-      const source = this.data_nodes[edge.source].clone();
-      const target = this.data_nodes[edge.target].clone();
+      let source, target;
+
+      if ( this.viewport.isIn(this.data_nodes[edge.source].x, this.data_nodes[edge.source].y) ) {
+        source = this.data_nodes[edge.source].clone();
+        target = this.data_nodes[edge.target].clone();
+      } else {
+        source = this.data_nodes[edge.target].clone();
+        target = this.data_nodes[edge.source].clone();
+      }
       const boundary_point = edge.boundary_point.clone();
       let new_subdivision_points = [];
 
@@ -112,6 +120,7 @@ export class boundaryFDEB extends FDEB{
         }
         new_subdivision_points.push(target);  
       }
+
       return new_subdivision_points;
     }
 
@@ -194,6 +203,28 @@ export class boundaryFDEB extends FDEB{
         (this.data_nodes[Q.source].y + this.data_nodes[Q.target].y) / 2.0
       );
       return average_length / (average_length + euclidean_distance(P_middle, Q_middle));
+    }
+
+    ////////////////////
+    // HELPER METHODS //
+    ////////////////////
+
+    translaterForThree() {
+      const E = new Edges();
+      for (var i = 0; i < this.subdivision_points_for_edge.length; i++) {
+        let node_list = [];
+        if ( !this.viewport.isIn(this.data_nodes[this.data_edges[i].source].x, this.data_nodes[this.data_edges[i].source].y) ) {
+          this.subdivision_points_for_edge[i].reverse();
+        }
+        node_list.push(this.subdivision_points_for_edge[i][0]);
+        for (var j = 1; j < this.subdivision_points_for_edge[i].length-1; j++) {
+          let n = new Coordinate(this.subdivision_points_for_edge[i][j].x, this.subdivision_points_for_edge[i][j].y, 0);
+          node_list.push(n);
+        }
+        node_list.push(this.subdivision_points_for_edge[i][this.subdivision_points_for_edge[i].length-1]);
+        E.push(new Edge(node_list, this.data_edges[i].idx));
+      }
+      return E;
     }
 
 }

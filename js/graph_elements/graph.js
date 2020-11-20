@@ -345,6 +345,8 @@ export class Graph {
     this.AQ.push( [this.E.hiding] );
     this.AQ.push( [this.AE_in.bundling,this.AE_inout.bundling] );
 
+    // this.viewer.addObject(this.E_inout_curves.getEdgeObjects(this.palette.c2));
+
     this.bundleState = true;
   }
 }
