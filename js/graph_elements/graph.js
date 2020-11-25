@@ -237,6 +237,7 @@ export class Graph {
 
     let final_inout_subdivision_num, final_in_subdivision_num, P_rate_inout, P_rate_in;
     if (this.state.subdivisionNumber === "fixed") {
+      console.log("fix");
       const ALL_SUBDIVISION_NUM = 300 * 64;
       const alpha = this.E_inout.length;
       const beta = this.E_in.length;
@@ -250,6 +251,7 @@ export class Graph {
       final_inout_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
       final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_in, C);
     } else if (this.state.subdivisionNumber === "flexible") {
+      console.log("flexible");
       const C = 6;
       const P_rate = 1.1;
       const P_initial = 1;
@@ -257,6 +259,7 @@ export class Graph {
       P_rate_inout = P_rate_in = Math.pow( (Math.pow(P_rate,C) * proportion), (1.0/C));
       final_inout_subdivision_num = final_in_subdivision_num = culculate_final_subdivision_num(P_initial, P_rate_inout, C);
     } else if (this.state.subdivisionNumber === "normal") {
+      console.log("normal");
       const C = 6;
       const P_initial = 1;
       P_rate_inout = P_rate_in = 2;

@@ -3,13 +3,13 @@ import { Animation } from "./animation.js"
 import { euclidean_distance, intersection, judge_intersection } from "../helper/subfunctions.js"
 
 export class Edge extends Array {
-  constructor(coordinate_list, idx=undefined, src=undefined, tar=undefined) {
+  constructor(coordinate_list, idx=undefined, src=undefined, tar=undefined, boundary=undefined) {
     super(...coordinate_list);
     this.segments = coordinate_list.length;
     this.idx = idx; // edge index
     this.src = src; // source node index
     this.tar = tar; // target node index
-    this.boundary_point = undefined;
+    this.boundary_point = boundary;
     this.azimath = undefined;
     this.len = euclidean_distance(this[0], this[this.length - 1]);
   }
@@ -32,7 +32,7 @@ export class Edge extends Array {
 
   clone() {
     const coordinateList = [...this];
-    return new Edge(coordinateList, this.idx, this.src, this.tar);
+    return new Edge(coordinateList, this.idx, this.src, this.tar, this.boundary_point);
   }
 
   computeBoundaryPoint(viewport) {
@@ -68,10 +68,13 @@ export class Edge extends Array {
   switchSourceTarget(viewport) {
     if ( !viewport.isIn(this[0].x, this[0].y) ) {
       this.reverse();
-      let foo = this.src;
+      const foo = this.src;
       this.src = this.tar;
       this.tar = foo;
+      return true;
     }
+    return false;
+    
   }
 
   attachSegmentPoint(segment) {

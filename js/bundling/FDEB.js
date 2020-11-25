@@ -7,8 +7,8 @@ export class FDEB {
     constructor({nodes, edges, viewport, K=0.1, S_initial=0.1, P_initial=1, P_rate=2, C=6,
       I_initial=70, I_rate=0.6666667, compatibility_threshold=0.6, eps=1e-8}) {
       this.data_nodes = nodes;
-      this.data_edges = this.filter_self_loops(edges);
       this.viewport = viewport;
+      this.data_edges = this.filter_self_loops(edges);
 
       this.compatibility_list_for_edge = [];
       this.subdivision_points_for_edge = [];

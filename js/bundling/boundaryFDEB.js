@@ -5,6 +5,19 @@ import { Edge, Edges } from "../graph_elements/edge.js"
 
 export class boundaryFDEB extends FDEB{
 
+    filter_self_loops(edgelist) {
+      this.isReverse = [];
+      let filtered_edge_list = [];
+      for (let e = 0; e < edgelist.length; e++) {
+        if (this.data_nodes[edgelist[e].source].x != this.data_nodes[edgelist[e].target].x && this.data_nodes[edgelist[e].source].y != this.data_nodes[edgelist[e].target].y) {
+          let edge = edgelist[e].clone();
+          this.isReverse.push(edge.switchSourceTarget(this.viewport))
+          filtered_edge_list.push(edge);
+        }
+      }
+      return filtered_edge_list;
+    } 
+
     //////////////////////////////////
     // CULCULATE SUBDIVISION METHOD //
     //////////////////////////////////
@@ -53,6 +66,7 @@ export class boundaryFDEB extends FDEB{
         source = this.data_nodes[edge.target].clone();
         target = this.data_nodes[edge.source].clone();
       }
+
       const boundary_point = edge.boundary_point.clone();
       let new_subdivision_points = [];
 
@@ -130,8 +144,8 @@ export class boundaryFDEB extends FDEB{
 
     compatibility_score(P, Q) {
       // console.log("afcc",this.angle_from_center_compatibility(P, Q),"cac",this.center_angle_compatibility(P, Q));
-      return this.center_angle_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); // legacy
-      // return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
+      // return this.center_angle_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); // legacy
+      return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
     }
 
     far_node_of_edge(e) {
@@ -213,15 +227,15 @@ export class boundaryFDEB extends FDEB{
       const E = new Edges();
       for (var i = 0; i < this.subdivision_points_for_edge.length; i++) {
         let node_list = [];
-        if ( !this.viewport.isIn(this.data_nodes[this.data_edges[i].source].x, this.data_nodes[this.data_edges[i].source].y) ) {
+        if ( this.isReverse[i] ) {
           this.subdivision_points_for_edge[i].reverse();
         }
-        node_list.push(this.subdivision_points_for_edge[i][0]);
-        for (var j = 1; j < this.subdivision_points_for_edge[i].length-1; j++) {
-          let n = new Coordinate(this.subdivision_points_for_edge[i][j].x, this.subdivision_points_for_edge[i][j].y, 0);
+
+        for (var j = 0; j < this.subdivision_points_for_edge[i].length; j++) {
+          const n = new Coordinate(this.subdivision_points_for_edge[i][j].x, this.subdivision_points_for_edge[i][j].y, 0);
           node_list.push(n);
         }
-        node_list.push(this.subdivision_points_for_edge[i][this.subdivision_points_for_edge[i].length-1]);
+
         E.push(new Edge(node_list, this.data_edges[i].idx));
       }
       return E;
@@ -277,8 +291,8 @@ export class boundaryFDEBwithMoveableCenter extends boundaryFDEB {
   }
 
   compatibility_score(P, Q) {
-    // return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
-    return this.center_angle_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
+    return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
+    // return this.center_angle_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
   }
 
 }
