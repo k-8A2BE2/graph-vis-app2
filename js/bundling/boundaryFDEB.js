@@ -57,15 +57,9 @@ export class boundaryFDEB extends FDEB{
 
     culculate_edge_division(P, idx, ratio) {
       const edge = this.data_edges[idx];
-      let source, target;
+      const source = this.data_nodes[edge.source].clone();
+      const target = this.data_nodes[edge.target].clone();
 
-      if ( this.viewport.isIn(this.data_nodes[edge.source].x, this.data_nodes[edge.source].y) ) {
-        source = this.data_nodes[edge.source].clone();
-        target = this.data_nodes[edge.target].clone();
-      } else {
-        source = this.data_nodes[edge.target].clone();
-        target = this.data_nodes[edge.source].clone();
-      }
 
       const boundary_point = edge.boundary_point.clone();
       let new_subdivision_points = [];
@@ -291,8 +285,8 @@ export class boundaryFDEBwithMoveableCenter extends boundaryFDEB {
   }
 
   compatibility_score(P, Q) {
-    return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
-    // return this.center_angle_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
+    // return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
+    return this.center_angle_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
   }
 
 }
