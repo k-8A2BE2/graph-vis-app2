@@ -241,18 +241,21 @@ export class AnimationEdges {
       this.FrameEdgesGeometry = undefined;
       this.FrameEdgesMaterial = undefined;
       this.FrameEdgesObject = undefined;
+    }
+
+    static async build(scene, originalEdges, bundledEdges, frame=10) {
+      const obj = new AnimationEdges(scene, originalEdges, bundledEdges, frame);
+      await obj.completeEdges();
+      await obj.computeIndices();
   
-      this.completeEdges();
-      this.computeIndices();
-  
-      this.bundling = new Animation( this.bundlingAnimation.bind(this) );
-      this.unbundling = new Animation( this.unbundlingAnimation.bind(this) );
-      this.disposing = new Animation( this.disposeEdgesObject.bind(this) );
+      obj.bundling = new Animation( obj.bundlingAnimation.bind(obj) );
+      obj.unbundling = new Animation( obj.unbundlingAnimation.bind(obj) );
+      obj.disposing = new Animation( obj.disposeEdgesObject.bind(obj) );
+
+      return obj
     }
   
-    completeEdges() {
-      
-
+    async completeEdges() {
       this.AnimationEdges = new Array(this.frame)
       for (var i = 0; i < this.frame; i++) {
         this.AnimationEdges[i] = new Array();
@@ -270,7 +273,7 @@ export class AnimationEdges {
       }
     }
   
-    computeIndices() {
+    async computeIndices() {
       for (var i = 0; i < this.originalEdges.length; i++) {
         this.AnimationEdgesIndeces.push(this.originalEdges[0].length * i);
         for (var j = 1; j < this.originalEdges[0].length-1; j++) {

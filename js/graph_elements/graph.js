@@ -350,13 +350,9 @@ export class Graph {
 
     
     [this.E_inout_curves, this.E_in_curves] = await Promise.all([inoutBundlingExecutor.execute(), inBundlingExecutor.execute()]);
-
-    const [previousInout, previousIn] = await [this.AE_inout, this.AE_in];
-    this.AE_inout = new AnimationEdges(this.viewer.scene, E_inout_splited, this.E_inout_curves, 12);
-    this.AE_in = new AnimationEdges(this.viewer.scene, E_in_splited, this.E_in_curves, 12);
-
-    console.log("Inout:",JSON.stringify(previousInout) === JSON.stringify(this.AE_inout));
-    console.log("In:",JSON.stringify(previousIn) === JSON.stringify(this.AE_in));
+    
+    this.AE_inout = await AnimationEdges.build(this.viewer.scene, E_inout_splited, this.E_inout_curves, 12);
+    this.AE_in = await AnimationEdges.build(this.viewer.scene, E_in_splited, this.E_in_curves, 12);
 
     this.viewer.addObject(this.AE_inout.initializeFrameEdges(this.palette.c2));
     this.viewer.addObject(this.AE_in.initializeFrameEdges(this.palette.c4));
