@@ -142,13 +142,7 @@ export class boundaryFDEB extends FDEB{
       return this.angle_from_center_compatibility(P, Q) * this.distance_from_center_compatibility(P, Q) * this.position_compatibility(P, Q); //modern
     }
 
-    far_node_of_edge(e) {
-      try {
-        euclidean_distance(this.viewport.center, this.data_nodes[e.source])
-      } catch (error) {
-        console.error("e",this.viewport.center,this.data_nodes[e.source]);
-      }
-      
+    far_node_of_edge(e) {      
       if (euclidean_distance(this.viewport.center, this.data_nodes[e.source]) > euclidean_distance(this.viewport.center, this.data_nodes[e.target])) {
         return e.source;
       } else {
