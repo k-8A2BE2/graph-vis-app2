@@ -29,10 +29,7 @@ async function init() {
     // const manualBundle = new CheckboxWithFunc("switchManual",G.unbundle.bind(G), G.unbundle.bind(G));
     new Button("buttonBundle", G.executeBundling.bind(G));
     new Button("buttonUnbundle", G.unbundle.bind(G));
-    new Button("funcTest", () => {
-        const cv = viewer.getCurrentViewport();
-        viewer.addObject(cv.getViewportAsNodes().getNodeObjects(palette.c4));
-    })
+    new Button("funcTest", G.testButtonFunction);
 
     tick();
 

@@ -352,6 +352,10 @@ export class Graph {
 
     this.bundleState = true;
   }
+
+  testButtonFunction() {
+    console.log("This is test function log.");
+  }
 }
 
 
