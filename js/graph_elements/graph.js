@@ -224,7 +224,7 @@ export class Graph {
     this.bundleState = false;
   }
 
-  continuousBundle() {
+  async continuousBundle() {
 
     if (!(this.AE_inout === undefined)) {
       this.AQ.push( [this.AE_in.disposing] )
@@ -336,11 +336,27 @@ export class Graph {
     }
     
     console.log(P_rate_inout,final_inout_subdivision_num);
-    this.E_inout_curves = new BFDEBMC({nodes: this.N, edges: this.E_inout, viewport: current_viewport, initial_viewport: this.viewer.initialViewport, compatibility_threshold: 0.6, P_rate: P_rate_inout}).execute();
-    this.E_in_curves = new normalFDEB({nodes: this.N, edges: this.E_in, compatibility_threshold: 0.6, P_rate: P_rate_in}).execute();
+    const inoutBundlingExecutor = new BFDEBMC({nodes: this.N,
+                                       edges: this.E_inout,
+                                       viewport: current_viewport,
+                                       initial_viewport: this.viewer.initialViewport,
+                                       compatibility_threshold: 0.6,
+                                       P_rate: P_rate_inout});
+                                      
+    const inBundlingExecutor = new normalFDEB({nodes: this.N,
+                                               edges: this.E_in,
+                                               compatibility_threshold: 0.6,
+                                               P_rate: P_rate_in});
+
     
+    [this.E_inout_curves, this.E_in_curves] = await Promise.all([inoutBundlingExecutor.execute(), inBundlingExecutor.execute()]);
+
+    const [previousInout, previousIn] = await [this.AE_inout, this.AE_in];
     this.AE_inout = new AnimationEdges(this.viewer.scene, E_inout_splited, this.E_inout_curves, 12);
     this.AE_in = new AnimationEdges(this.viewer.scene, E_in_splited, this.E_in_curves, 12);
+
+    console.log("Inout:",JSON.stringify(previousInout) === JSON.stringify(this.AE_inout));
+    console.log("In:",JSON.stringify(previousIn) === JSON.stringify(this.AE_in));
 
     this.viewer.addObject(this.AE_inout.initializeFrameEdges(this.palette.c2));
     this.viewer.addObject(this.AE_in.initializeFrameEdges(this.palette.c4));
@@ -354,7 +370,8 @@ export class Graph {
   }
 
   testButtonFunction() {
-    console.log("This is test function log.");
+
+  
   }
 }
 

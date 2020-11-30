@@ -316,7 +316,7 @@ export class FDEB {
       return E;
     }
 
-    execute() {
+    async execute() {
         let S = this.S_initial; //
         let I = this.I_initial; //
         let P = this.P_initial; // Pはエッジの内点の数。見掛け上は両端の点で＋2されている。
