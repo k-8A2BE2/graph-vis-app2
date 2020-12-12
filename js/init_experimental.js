@@ -15,7 +15,7 @@ async function init() {
     await Promise.all([palette.experiment(), state.initialize()]);
 
     // const viewer = new Viewer(960, 540, palette);
-    const viewer = new OrthographicViewer(960, 540, palette);
+    const viewer = new OrthographicViewer(960, 720, palette);
     viewer.initialze();
 
     const G = new Graph(viewer, palette, state);
