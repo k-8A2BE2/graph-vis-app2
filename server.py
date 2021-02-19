@@ -7,7 +7,7 @@ app = Flask(__name__, static_folder='.', static_url_path='')
 
 @app.route('/')
 def index():
-    return app.send_static_file('index.html')
+    return app.send_static_file('./html/index.html')
 
 @app.route('/experiment')
 def experiment():
@@ -26,5 +26,5 @@ def favicon():
     return app.send_static_file('./material/favicon.ico')
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=8001, debug=True)
-    # app.run(host='0.0.0.0', port=80, debug=True)
+    # app.run(host='127.0.0.1', port=8001, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)
